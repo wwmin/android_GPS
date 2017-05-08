@@ -64,7 +64,7 @@ public class MainActivity extends Activity {
         /*得到布局中的所有对象*/
         findView();
         setListener();
-
+        login();
     }
 
     private void openGPS() {
@@ -134,47 +134,6 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
                 tv.setText("当前的经度:\n当前的纬度");
-
-                String webServiceUrl = "http://60.29.110.104:8082/api/";
-                String loginURL = "Account/authenticate";
-                String testURL = "Account/test";
-                try {
-                    String dataParse = "name=" + URLEncoder.encode("admin", "UTF-8") + "&password=" + URLEncoder.encode("123", "UTF-8");
-                    AsyncHttpClient client = new AsyncHttpClient();
-                    client.get(webServiceUrl + testURL, new AsyncHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int i, Header[] headers, byte[] bytes) {
-                            Log.i("success:", new String(bytes));
-                            Toast.makeText(MainActivity.this, "get成功。", Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                            Log.i("failure:", new String(bytes));
-                            Toast.makeText(MainActivity.this, "get失败。", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    //post
-                    RequestParams params = new RequestParams();
-                    params.add("name", "admin");
-                    params.add("password", "123");
-                    client.post(webServiceUrl + loginURL, params, new AsyncHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int i, Header[] headers, byte[] bytes) {
-                            Log.i("登录成功：", new String(bytes));
-                            Toast.makeText(MainActivity.this, new String(bytes), Toast.LENGTH_LONG).show();
-                        }
-
-                        @Override
-                        public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                            Log.i("登录失败：", new String(bytes));
-                        }
-                    });
-                } catch (Exception e) {
-                    Log.e(TAG, e.getMessage());
-                }
-
-
             }
         });
     }
@@ -210,4 +169,44 @@ public class MainActivity extends Activity {
         }
     };
 
+    private void login() {
+        String webServiceUrl = "http://60.29.110.104:8082/api/";
+        String loginURL = "Account/authenticate";
+        String testURL = "Account/test";
+        try {
+            String dataParse = "name=" + URLEncoder.encode("admin", "UTF-8") + "&password=" + URLEncoder.encode("123", "UTF-8");
+            AsyncHttpClient client = new AsyncHttpClient();
+//            client.get(webServiceUrl + testURL, new AsyncHttpResponseHandler() {
+//                @Override
+//                public void onSuccess(int i, Header[] headers, byte[] bytes) {
+//                    Log.i("success:", new String(bytes));
+//                    Toast.makeText(MainActivity.this, "get成功。", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                @Override
+//                public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+//                    Log.i("failure:", new String(bytes));
+//                    Toast.makeText(MainActivity.this, "get失败。", Toast.LENGTH_SHORT).show();
+//                }
+//            });
+            //post
+            RequestParams params = new RequestParams();
+            params.add("name", "admin");
+            params.add("password", "123");
+            client.post(webServiceUrl + loginURL, params, new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                    Log.i("登录成功：", new String(bytes));
+                    Toast.makeText(MainActivity.this, new String(bytes), Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                    Log.i("登录失败：", new String(bytes));
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
 }
