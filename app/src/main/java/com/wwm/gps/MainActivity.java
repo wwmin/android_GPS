@@ -145,11 +145,29 @@ public class MainActivity extends Activity {
                         @Override
                         public void onSuccess(int i, Header[] headers, byte[] bytes) {
                             Log.i("success:", new String(bytes));
+                            Toast.makeText(MainActivity.this, "get成功。", Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
                         public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
                             Log.i("failure:", new String(bytes));
+                            Toast.makeText(MainActivity.this, "get失败。", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    //post
+                    RequestParams params = new RequestParams();
+                    params.add("name", "admin");
+                    params.add("password", "123");
+                    client.post(webServiceUrl + loginURL, params, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                            Log.i("登录成功：", new String(bytes));
+                            Toast.makeText(MainActivity.this, new String(bytes), Toast.LENGTH_LONG).show();
+                        }
+
+                        @Override
+                        public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                            Log.i("登录失败：", new String(bytes));
                         }
                     });
                 } catch (Exception e) {
