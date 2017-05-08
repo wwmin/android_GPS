@@ -1,5 +1,6 @@
 package com.wwm.gps;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -12,12 +13,19 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceActivity;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.net.URLEncoder;
+
+import com.loopj.android.http.*;
+
+import org.apache.http.Header;
 
 /**
  * Created by wwm on 2016/8/11.
@@ -56,6 +64,7 @@ public class MainActivity extends Activity {
         /*得到布局中的所有对象*/
         findView();
         setListener();
+
     }
 
     private void openGPS() {
@@ -125,6 +134,29 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
                 tv.setText("当前的经度:\n当前的纬度");
+
+                String webServiceUrl = "http://60.29.110.104:8082/api/";
+                String loginURL = "Account/authenticate";
+                String testURL = "Account/test";
+                try {
+                    String dataParse = "name=" + URLEncoder.encode("admin", "UTF-8") + "&password=" + URLEncoder.encode("123", "UTF-8");
+                    AsyncHttpClient client = new AsyncHttpClient();
+                    client.get(webServiceUrl + testURL, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                            Log.i("success:", new String(bytes));
+                        }
+
+                        @Override
+                        public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                            Log.i("failure:", new String(bytes));
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.e(TAG, e.getMessage());
+                }
+
+
             }
         });
     }
@@ -159,4 +191,5 @@ public class MainActivity extends Activity {
             Log.e(TAG, s);
         }
     };
+
 }
