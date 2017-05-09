@@ -24,10 +24,13 @@ import android.widget.Toast;
 import java.net.URLEncoder;
 import java.util.List;
 
+import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.location.Poi;
 import com.loopj.android.http.*;
+import com.wwm.gps.service.LocationService;
 
 import org.apache.http.Header;
 
@@ -35,8 +38,9 @@ import org.apache.http.Header;
 /**
  * Created by wwm on 2016/8/11.
  */
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnClickListener {
     private Button btnPosition;
+    private Button btn_go;
     private TextView tv;
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -44,9 +48,6 @@ public class MainActivity extends Activity {
     private double longitude = 0.0;
     private TextView info;
     private LocationManager locationManager;
-
-    public LocationClient mLocationClient = null;
-    public BDLocationListener myListener = new MyLocationListener();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,7 @@ public class MainActivity extends Activity {
         findView();
         setListener();
 //        login();
+        btn_go.setOnClickListener(this);
 
     }
 
@@ -132,6 +134,7 @@ public class MainActivity extends Activity {
 
     private void findView() {
         btnPosition = (Button) findViewById(R.id.position);
+        btn_go = (Button) findViewById(R.id.btn_go);
         tv = (TextView) findViewById(R.id.tv);
     }
 
@@ -143,7 +146,6 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
                 tv.setText("当前的经度:\n当前的纬度");
-                startLocate();
             }
         });
     }
@@ -220,24 +222,14 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void startLocate() {
-        //地理位置声明
-        mLocationClient = new LocationClient(getApplicationContext());
-        mLocationClient.registerLocationListener(myListener);
-        LocationClientOption option = new LocationClientOption();
-        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);//可选，默认高精度，设置定位模式，高精度，低功耗，仅设备
-        option.setCoorType("bd09ll");//可选，默认gcj02，设置返回的定位结果坐标系
-        int span = 1000;
-        option.setScanSpan(span);//可选，默认0，即仅定位一次，设置发起定位请求的间隔需要大于等于1000ms才是有效的
-        option.setIsNeedAddress(true); //可选，设置是否需要地址信息，默认不需要
-        option.setOpenGps(true); //可选，默认false,设置是否使用gps
-        option.setLocationNotify(true);  //可选，默认false，设置是否当GPS有效时按照1S/1次频率输出GPS结果
-        option.setIsNeedLocationDescribe(false);//可选，默认false，设置是否需要位置语义化结果，可以在BDLocation.getLocationDescribe里得到，结果类似于“在北京天安门附近”
-        option.setIsNeedLocationPoiList(false); //可选，默认false，设置是否需要POI结果，可以在BDLocation.getPoiList里得到
-        option.setIgnoreKillProcess(true);//可选，默认true，定位SDK内部是一个SERVICE，并放到了独立进程，设置是否在stop的时候杀死这个进程，默认不杀死
-        option.setEnableSimulateGps(false); //可选，默认false，设置是否需要过滤GPS仿真结果，默认需要
-        mLocationClient.setLocOption(option);
-        //开启定位
-        mLocationClient.start();
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.btn_go) {
+            Intent intent = new Intent(MainActivity.this, TestActivity.class);
+            intent.putExtra("Position1", latitude);
+            intent.putExtra("Position2", longitude);
+            startActivity(intent);
+
+        }
     }
 }
