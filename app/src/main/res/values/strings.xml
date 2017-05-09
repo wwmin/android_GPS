@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">GPS</string>
     <string name="position">当前位置</string>
+    <string name="bdPosition">百度定位的位置</string>
+    <string name="startLocation">开始百度定位</string>
+    <string name="stopLocation">停止定位</string>
 </resources>
 
 

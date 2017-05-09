@@ -3,22 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <!--得到当前位置的按钮-->
-    <Button
-        android:id="@+id/position"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/position" />
 
+    <Button
+        android:id="@+id/btn_bd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/startLocation" />
     <TextView
-        android:id="@+id/tv"
+        android:id="@+id/tv_bd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="" />
-
-    <Button
-        android:id="@+id/btn_go"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="打开新的activity" />
 </LinearLayout>
