@@ -9,8 +9,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
-import android.media.audiofx.BassBoost;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,11 +19,21 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.URLEncoder;
+
+import com.baidu.mapapi.SDKInitializer;
+import com.loopj.android.http.*;
+
+import org.apache.http.Header;
+
+
 /**
  * Created by wwm on 2016/8/11.
  */
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnClickListener {
     private Button btnPosition;
+    private Button btn_location_base;
+    private Button btn_map_base;
     private TextView tv;
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -58,6 +66,9 @@ public class MainActivity extends Activity {
         /*得到布局中的所有对象*/
         findView();
         setListener();
+//        login();
+        btn_location_base.setOnClickListener(this);
+        btn_map_base.setOnClickListener(this);
     }
 
     private void openGPS() {
@@ -116,6 +127,8 @@ public class MainActivity extends Activity {
 
     private void findView() {
         btnPosition = (Button) findViewById(R.id.position);
+        btn_location_base = (Button) findViewById(R.id.btn_location_base);
+        btn_map_base=(Button)findViewById(R.id.btn_map_base);
         tv = (TextView) findViewById(R.id.tv);
     }
 
@@ -161,4 +174,63 @@ public class MainActivity extends Activity {
             Log.e(TAG, s);
         }
     };
+
+    private void login() {
+        String webServiceUrl = "http://60.29.110.104:8082/api/";
+        String loginURL = "Account/authenticate";
+        String testURL = "Account/test";
+        try {
+            String dataParse = "name=" + URLEncoder.encode("admin", "UTF-8") + "&password=" + URLEncoder.encode("123", "UTF-8");
+            AsyncHttpClient client = new AsyncHttpClient();
+//            client.get(webServiceUrl + testURL, new AsyncHttpResponseHandler() {
+//                @Override
+//                public void onSuccess(int i, Header[] headers, byte[] bytes) {
+//                    Log.i("success:", new String(bytes));
+//                    Toast.makeText(MainActivity.this, "get成功。", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                @Override
+//                public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+//                    Log.i("failure:", new String(bytes));
+//                    Toast.makeText(MainActivity.this, "get失败。", Toast.LENGTH_SHORT).show();
+//                }
+//            });
+            //post
+            RequestParams params = new RequestParams();
+            params.add("name", "admin");
+            params.add("password", "123");
+            client.post(webServiceUrl + loginURL, params, new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                    Log.i("登录成功：", new String(bytes));
+                    Toast.makeText(MainActivity.this, new String(bytes), Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                    Log.i("登录失败：", new String(bytes));
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_location_base:
+                Intent intent = new Intent(MainActivity.this, TestActivity.class);
+                intent.putExtra("Position1", latitude);
+                intent.putExtra("Position2", longitude);
+                startActivity(intent);
+                break;
+            case R.id.btn_map_base:
+                Intent intent1 = new Intent(MainActivity.this, mapActivity.class);
+                startActivity(intent1);
+                break;
+            default:
+                break;
+        }
+    }
 }
