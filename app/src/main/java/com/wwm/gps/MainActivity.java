@@ -1,6 +1,5 @@
 package com.wwm.gps;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -13,7 +12,6 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceActivity;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -22,15 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.net.URLEncoder;
-import java.util.List;
 
-import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
-import com.baidu.location.Poi;
+import com.baidu.mapapi.SDKInitializer;
 import com.loopj.android.http.*;
-import com.wwm.gps.service.LocationService;
 
 import org.apache.http.Header;
 
@@ -40,7 +32,8 @@ import org.apache.http.Header;
  */
 public class MainActivity extends Activity implements View.OnClickListener {
     private Button btnPosition;
-    private Button btn_go;
+    private Button btn_location_base;
+    private Button btn_map_base;
     private TextView tv;
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -74,8 +67,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         findView();
         setListener();
 //        login();
-        btn_go.setOnClickListener(this);
-
+        btn_location_base.setOnClickListener(this);
+        btn_map_base.setOnClickListener(this);
     }
 
     private void openGPS() {
@@ -134,7 +127,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void findView() {
         btnPosition = (Button) findViewById(R.id.position);
-        btn_go = (Button) findViewById(R.id.btn_go);
+        btn_location_base = (Button) findViewById(R.id.btn_location_base);
+        btn_map_base=(Button)findViewById(R.id.btn_map_base);
         tv = (TextView) findViewById(R.id.tv);
     }
 
@@ -224,12 +218,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.btn_go) {
-            Intent intent = new Intent(MainActivity.this, TestActivity.class);
-            intent.putExtra("Position1", latitude);
-            intent.putExtra("Position2", longitude);
-            startActivity(intent);
-
+        switch (v.getId()) {
+            case R.id.btn_location_base:
+                Intent intent = new Intent(MainActivity.this, TestActivity.class);
+                intent.putExtra("Position1", latitude);
+                intent.putExtra("Position2", longitude);
+                startActivity(intent);
+                break;
+            case R.id.btn_map_base:
+                Intent intent1 = new Intent(MainActivity.this, mapActivity.class);
+                startActivity(intent1);
+                break;
+            default:
+                break;
         }
     }
 }

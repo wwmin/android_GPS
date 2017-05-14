@@ -17,8 +17,13 @@
         android:text="" />
 
     <Button
-        android:id="@+id/btn_go"
+        android:id="@+id/btn_location_base"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="打开新的activity" />
+        android:text="@string/location_base" />
+    <Button
+        android:id="@+id/btn_map_base"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/map_base" />
 </LinearLayout>
