@@ -26,4 +26,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/map_base" />
+    <Button
+        android:id="@+id/btn_base_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/start_xc"/>
 </LinearLayout>
