@@ -41,6 +41,15 @@
         <activity
             android:name=".activity.baseMapActivity"
             android:launchMode="singleTask"/>
+        <activity
+            android:name=".activity.SettingActivity"
+            android:launchMode="standard"/>
+        <activity
+            android:name=".activity.UpdatePwdActivity"
+            android:launchMode="standard"/>
+        <activity
+            android:name=".activity.SetTimeActivity"
+            android:launchMode="standard"/>
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
@@ -56,6 +65,9 @@
                 <action android:name="com.wwm.gps.service.XCService" />
             </intent-filter>
         </service>
+        <service
+            android:name=".service.DownloadService"
+            android:enabled="true"/>
     </application>
 
     <!-- 这个权限用于进行网络定位-->

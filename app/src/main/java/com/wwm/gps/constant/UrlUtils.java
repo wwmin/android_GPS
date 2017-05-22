@@ -16,4 +16,8 @@ public class UrlUtils {
     public static final String SET_SUBGPS_INFO = URL + "UserInfo/GetCompanyInfoByUserID";
     //获取title
     public static final String GET_SYSTEM_TITLE = URL + "SystemInfo/GetTitle";
+    //检查更新
+    public static final String GET_VERSION = URL + "SystemInfo/GetVersion";
+    //设置间隔时间（秒）
+    public static final String SET_USERGPS_TIME = URL + "GpsInfo/SetGpsTime";
 }
