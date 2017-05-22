@@ -1,4 +1,4 @@
-package com.wwm.gps;
+package com.wwm.gps.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,8 +11,9 @@ import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
-import com.baidu.location.LocationClient;
 import com.baidu.location.Poi;
+import com.wwm.gps.R;
+import com.wwm.gps.application.LocationApplication;
 import com.wwm.gps.service.LocationService;
 
 import java.util.List;

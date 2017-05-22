@@ -1,4 +1,4 @@
-package com.wwm.gps;
+package com.wwm.gps.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,8 +22,10 @@ import android.widget.Toast;
 
 import java.net.URLEncoder;
 
-import com.baidu.mapapi.SDKInitializer;
 import com.loopj.android.http.*;
+import com.wwm.gps.R;
+import com.wwm.gps.dialog.TwoBtnDialog;
+import com.wwm.gps.service.XCService;
 
 import org.apache.http.Header;
 
@@ -34,6 +37,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private Button btnPosition;
     private Button btn_location_base;
     private Button btn_map_base;
+    private Button btn_base_map;
     private TextView tv;
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -69,6 +73,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 //        login();
         btn_location_base.setOnClickListener(this);
         btn_map_base.setOnClickListener(this);
+        btn_base_map.setOnClickListener(this);
     }
 
     private void openGPS() {
@@ -128,7 +133,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void findView() {
         btnPosition = (Button) findViewById(R.id.position);
         btn_location_base = (Button) findViewById(R.id.btn_location_base);
-        btn_map_base=(Button)findViewById(R.id.btn_map_base);
+        btn_map_base = (Button) findViewById(R.id.btn_map_base);
+        btn_base_map = (Button) findViewById(R.id.btn_base_map);
         tv = (TextView) findViewById(R.id.tv);
     }
 
@@ -229,8 +235,31 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 Intent intent1 = new Intent(MainActivity.this, mapActivity.class);
                 startActivity(intent1);
                 break;
+            case R.id.btn_base_map:
+                Intent intent2 = new Intent(MainActivity.this, baseMapActivity.class);
+                startActivity(intent2);
+                break;
             default:
                 break;
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            TwoBtnDialog btnDialog = new TwoBtnDialog();
+            btnDialog.showdialog(this, "确定退出吗?", "退出", "取消");
+            btnDialog.getBtnOk().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MainActivity.this, XCService.class);
+                    stopService(intent);
+                    finish();
+                }
+            });
+            return false;
+        } else {
+            return super.onKeyDown(keyCode, event);
         }
     }
 }

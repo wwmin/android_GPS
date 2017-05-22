@@ -1,4 +1,4 @@
-package com.wwm.gps;
+package com.wwm.gps.application;
 
 
 import com.wwm.gps.service.LocationService;
