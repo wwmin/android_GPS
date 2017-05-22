@@ -33,7 +33,7 @@ import java.util.List;
  * Created by wwm on 2017/5/12.
  */
 
-public class mapActivity extends Activity {
+public class mapActivity extends BaseActivity {
     MapView mMapView = null;
     private BaiduMap mBaiduMap;
 

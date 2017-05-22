@@ -28,27 +28,34 @@
         <!--</activity>-->
 
         <activity android:name=".activity.MainActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask">
         </activity>
         <activity
             android:name=".activity.TestActivity"
+            android:screenOrientation="portrait"
             ></activity>
 
         <activity
             android:name=".activity.mapActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask"
             ></activity>
         <activity
             android:name=".activity.baseMapActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask"/>
         <activity
             android:name=".activity.SettingActivity"
+            android:screenOrientation="portrait"
             android:launchMode="standard"/>
         <activity
             android:name=".activity.UpdatePwdActivity"
+            android:screenOrientation="portrait"
             android:launchMode="standard"/>
         <activity
             android:name=".activity.SetTimeActivity"
+            android:screenOrientation="portrait"
             android:launchMode="standard"/>
 
         <meta-data
