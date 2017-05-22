@@ -1,4 +1,4 @@
-package com.wwm.gps;
+package com.wwm.gps.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -20,6 +20,8 @@ import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.DistanceUtil;
+import com.wwm.gps.R;
+import com.wwm.gps.application.LocationApplication;
 import com.wwm.gps.service.LocationService;
 import com.wwm.gps.service.Utils;
 

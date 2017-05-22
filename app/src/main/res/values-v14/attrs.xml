@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--箭头文字-->
+    <declare-styleable name="arrowTextView">
+        <attr name="blackTitle" format="string"/>
+        <attr name="grayTitle" format="string"/>
+        <attr name="titleImage" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="HorizontalListView">
+        <attr name="dividerWidth" format="dimension" />
+        <attr name="android:divider" />
+        <attr name="android:requiresFadingEdge" />
+        <attr name="android:fadingEdgeLength" />
+    </declare-styleable>
+
+</resources>
