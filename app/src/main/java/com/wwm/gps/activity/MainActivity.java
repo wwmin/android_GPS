@@ -1,249 +1,222 @@
 package com.wwm.gps.activity;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.DialogInterface;
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
+import android.content.pm.PackageManager;
 import android.location.LocationManager;
-import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.provider.Settings;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.loopj.android.http.*;
+import com.google.gson.Gson;
 import com.wwm.gps.R;
+import com.wwm.gps.adapter.MainMenuAdapter;
+import com.wwm.gps.bean.Company;
+import com.wwm.gps.bean.HomeMenu;
+import com.wwm.gps.bean.LoginInfo;
+import com.wwm.gps.constant.Constant;
+import com.wwm.gps.data.LocalData;
 import com.wwm.gps.dialog.TwoBtnDialog;
+import com.wwm.gps.dialog.UpdateDialog;
 import com.wwm.gps.service.XCService;
+import com.wwm.gps.utils.SPUtil;
 
-import org.apache.http.Header;
+//import org.apache.http.Header;
 
 
 /**
  * Created by wwm on 2016/8/11.
  */
-public class MainActivity extends Activity implements View.OnClickListener {
-    private Button btnPosition;
-    private Button btn_location_base;
-    private Button btn_map_base;
-    private Button btn_base_map;
-    private TextView tv;
+public class MainActivity extends BaseActivity{
+    private GridView gv_menu;
+    private MainMenuAdapter menuAdapter;
+    private List<HomeMenu> menuList = new ArrayList<HomeMenu>();
 
-    private static final String TAG = MainActivity.class.getSimpleName();
-    private double latitude = 0.0;
-    private double longitude = 0.0;
-    private TextView info;
-    private LocationManager locationManager;
+    private TextView tv_info;
+
+    private final int SDK_PERMISSION_REQUEST = 127;
+    private String permissionInfo;
+    public static MainActivity instance = null;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        /*获得locationManager服务*/
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        boolean network = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        if (gps) {
-            getLocation();
-        } else {
-            openGPS();
-            toggleGPS();
-            new Handler() {
-            }.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    getLocation();
-                }
-            }, 2000);
-        }
-        /*得到布局中的所有对象*/
-        findView();
-        setListener();
-//        login();
-        btn_location_base.setOnClickListener(this);
-        btn_map_base.setOnClickListener(this);
-        btn_base_map.setOnClickListener(this);
-    }
+        instance = this;
+        init();
 
-    private void openGPS() {
-        Toast.makeText(MainActivity.this, "请打开GPS", Toast.LENGTH_SHORT).show();
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setMessage("请打开GPS");
-        dialog.setPositiveButton("去设置", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                    /*转到手机设置界面,用户设置GPS*/
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivityForResult(intent, 0);//设置完成后返回到原来的界面
-            }
-        });
-        dialog.setNeutralButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
-    }
+        //检查版本更新
+        UpdateDialog updateDialog = new UpdateDialog();
+        updateDialog.checkUpdate(MainActivity.this, "main");
 
-    private void toggleGPS() {
-        Intent gpsIntent = new Intent();
-        gpsIntent.setClassName("com.android.settings",
-                "com.android.settings.widget.SettingsAppWidgetProvider");
-        gpsIntent.addCategory("android.intent.category.ALTERNATIVE");
-        gpsIntent.setData(Uri.parse("custom:3"));
-        try {
-            PendingIntent.getBroadcast(this, 0, gpsIntent, 0).send();
-        } catch (PendingIntent.CanceledException e) {
-            e.printStackTrace();
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
-            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            if (location != null) {
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
-            }
-        }
-    }
+        String companyData = SPUtil.getData(MainActivity.this, Constant.SP_COMPANY, "").toString();
+        String userData = SPUtil.getData(MainActivity.this, Constant.SP_USER_INFO, "").toString();
+        Gson gson = new Gson();
+//        Company company = gson.fromJson(companyData, Company.class);
+//        LoginInfo info = gson.fromJson(userData, LoginInfo.class);
 
-    private void getLocation() {
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (location != null) {
-            latitude = location.getLatitude();
-            longitude = location.getLongitude();
-        } else {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
-        }
-        if (tv == null) {
-            findView();
-        }
-        tv.setText("纬度：" + latitude + "\n" + "经度：" + longitude);
-    }
+//        tv_info.setText(company.getCompName() + "—" + info.getUserRealName());
+        tv_info.setText("GPS定位应用");
+        menuList = LocalData.getHomeMenu();
+//        if (company.getCompLevel() >= 3) {
+//            menuList.remove(0);
+//        }
+        menuAdapter = new MainMenuAdapter(MainActivity.this, menuList);
+        gv_menu.setAdapter(menuAdapter);
 
-    private void findView() {
-        btnPosition = (Button) findViewById(R.id.position);
-        btn_location_base = (Button) findViewById(R.id.btn_location_base);
-        btn_map_base = (Button) findViewById(R.id.btn_map_base);
-        btn_base_map = (Button) findViewById(R.id.btn_base_map);
-        tv = (TextView) findViewById(R.id.tv);
-    }
+        getPermission();
 
-    private void setListener() {
-        /*监听位置变化,2秒一次,距离10米以上*/
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
-        /*设置对象的监听器*/
-        btnPosition.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                tv.setText("当前的经度:\n当前的纬度");
-            }
-        });
-    }
+//        Intent intent = new Intent(MainActivity.this, DWService.class);
+//        intent.putExtra("userId", Common.getUserId(MainActivity.this));
+//        startService(intent);
 
-    /*位置监听器*/
-    LocationListener locationListener = new LocationListener() {
-        @Override
-        public void onLocationChanged(Location location) {
-            Log.i("onLocationChanged", "come in");
-            if (location != null) {
-                Log.w("Location", "Current altitude = " + location.getAltitude());
-                Log.w("Location", "Current latitude = " + location.getLatitude());
-                latitude = location.getLatitude(); // 经度
-                longitude = location.getLongitude(); // 纬度
-            }
-            tv.setText("当前的经度:" + location.getLatitude() + ",\n当前的纬度:" + location.getLongitude());
 
-        }
 
-        @Override
-        public void onStatusChanged(String s, int i, Bundle bundle) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String s) {
-            Log.e(TAG, s);
-        }
-
-        @Override
-        public void onProviderDisabled(String s) {
-            Log.e(TAG, s);
-        }
-    };
-
-    private void login() {
-        String webServiceUrl = "http://60.29.110.104:8082/api/";
-        String loginURL = "Account/authenticate";
-        String testURL = "Account/test";
-        try {
-            String dataParse = "name=" + URLEncoder.encode("admin", "UTF-8") + "&password=" + URLEncoder.encode("123", "UTF-8");
-            AsyncHttpClient client = new AsyncHttpClient();
-//            client.get(webServiceUrl + testURL, new AsyncHttpResponseHandler() {
+//        setContentView(R.layout.activity_main);
+//        /*获得locationManager服务*/
+//        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+//        boolean network = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+//        if (gps) {
+//            getLocation();
+//        } else {
+//            openGPS();
+//            toggleGPS();
+//            new Handler() {
+//            }.postDelayed(new Runnable() {
 //                @Override
-//                public void onSuccess(int i, Header[] headers, byte[] bytes) {
-//                    Log.i("success:", new String(bytes));
-//                    Toast.makeText(MainActivity.this, "get成功。", Toast.LENGTH_SHORT).show();
+//                public void run() {
+//                    getLocation();
 //                }
-//
-//                @Override
-//                public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-//                    Log.i("failure:", new String(bytes));
-//                    Toast.makeText(MainActivity.this, "get失败。", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-            //post
-            RequestParams params = new RequestParams();
-            params.add("name", "admin");
-            params.add("password", "123");
-            client.post(webServiceUrl + loginURL, params, new AsyncHttpResponseHandler() {
-                @Override
-                public void onSuccess(int i, Header[] headers, byte[] bytes) {
-                    Log.i("登录成功：", new String(bytes));
-                    Toast.makeText(MainActivity.this, new String(bytes), Toast.LENGTH_LONG).show();
-                }
+//            }, 2000);
+//        }
+//        /*得到布局中的所有对象*/
+//        findView();
+//        setListener();
+////        login();
+//        btn_location_base.setOnClickListener(this);
+//        btn_map_base.setOnClickListener(this);
+//        btn_base_map.setOnClickListener(this);
+    }
+    private void init() {
+        tv_title = (TextView) findViewById(R.id.top_view_text);
+        String title = SPUtil.getData(MainActivity.this, Constant.SP_SYS_TITLE, "定位系统").toString();
+        tv_title.setText(title);
+        iv_back = (ImageView) findViewById(R.id.top_view_back);
+        iv_back.setVisibility(View.GONE);
 
-                @Override
-                public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                    Log.i("登录失败：", new String(bytes));
+        tv_info = (TextView) findViewById(R.id.tv_home_user_info);
+
+
+        gv_menu = (GridView) findViewById(R.id.gv_main_menu);
+        gv_menu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (menuList.get(position).getId()) {
+                    case 1:
+                        Intent testIntent = new Intent(MainActivity.this, TestActivity.class);
+                        startActivity(testIntent);
+                        break;
+                    case 2:
+                        Intent mapIntent = new Intent(MainActivity.this, mapActivity.class);
+                        startActivity(mapIntent);
+                        break;
+                    case 3:
+                        Intent advanceMapIntent = new Intent(MainActivity.this, baseMapActivity.class);
+                        startActivity(advanceMapIntent);
+                        break;
+                    case 13:
+                        Intent settingIntent = new Intent(MainActivity.this, SettingActivity.class);
+                        startActivity(settingIntent);
+                        break;
                 }
-            });
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            }
+        });
+
+    }
+
+    @TargetApi(23)
+    private void getPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            ArrayList<String> permissions = new ArrayList<String>();
+            /***
+             * 定位权限为必须权限，用户如果禁止，则每次进入都会申请
+             */
+            // 定位精确位置
+            if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+            }
+            if(checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+            }
+			/*
+			 * 读写权限和电话状态权限非必要权限(建议授予)只会申请一次，用户同意或者禁止，只会弹一次
+			 */
+            // 读写权限
+            if (addPermission(permissions, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                permissionInfo += "Manifest.permission.WRITE_EXTERNAL_STORAGE Deny \n";
+            }
+            // 读取电话状态权限
+            if (addPermission(permissions, Manifest.permission.READ_PHONE_STATE)) {
+                permissionInfo += "Manifest.permission.READ_PHONE_STATE Deny \n";
+            }
+
+            if (permissions.size() > 0) {
+                requestPermissions(permissions.toArray(new String[permissions.size()]), SDK_PERMISSION_REQUEST);
+            }
         }
     }
 
+    @TargetApi(23)
+    private boolean addPermission(ArrayList<String> permissionsList, String permission) {
+        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) { // 如果应用没有获得对应权限,则添加到列表中,准备批量申请
+            if (shouldShowRequestPermissionRationale(permission)){
+                return true;
+            }else{
+                permissionsList.add(permission);
+                return false;
+            }
+
+        }else{
+            return true;
+        }
+    }
+
+    @TargetApi(23)
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_location_base:
-                Intent intent = new Intent(MainActivity.this, TestActivity.class);
-                intent.putExtra("Position1", latitude);
-                intent.putExtra("Position2", longitude);
-                startActivity(intent);
-                break;
-            case R.id.btn_map_base:
-                Intent intent1 = new Intent(MainActivity.this, mapActivity.class);
-                startActivity(intent1);
-                break;
-            case R.id.btn_base_map:
-                Intent intent2 = new Intent(MainActivity.this, baseMapActivity.class);
-                startActivity(intent2);
-                break;
-            default:
-                break;
-        }
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        // TODO Auto-generated method stub
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+    }
+    @Override
+    protected void onDestroy() {
+//        Intent intent = new Intent(MainActivity.this, DWService.class);
+//        stopService(intent);
+        super.onDestroy();
     }
 
+    private List<String> getData(){
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < 13; i++) {
+            String str = "";
+            list.add(str);
+        }
+
+        return list;
+
+    }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
