@@ -6,38 +6,56 @@
         android:targetSdkVersion="21" />
 
     <application
-        android:name="com.wwm.gps.LocationApplication"
+        android:name="com.wwm.gps.application.LocationApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppBaseTheme">
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name">
+        <activity android:name=".activity.LoginActivity" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!--<activity-->
+            <!--android:name=".activity.MainActivity"-->
+            <!--android:launchMode="singleTask"-->
+            <!--android:label="@string/app_name">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        <!--</activity>-->
 
+        <activity android:name=".activity.MainActivity"
+            android:launchMode="singleTask">
+        </activity>
+        <activity
+            android:name=".activity.TestActivity"
+            ></activity>
 
         <activity
-            android:name=".TestActivity"
-            android:label="@string/app_name"></activity>
-
+            android:name=".activity.mapActivity"
+            android:launchMode="singleTask"
+            ></activity>
         <activity
-            android:name=".mapActivity"
-            android:label="@string/map_base"></activity>
+            android:name=".activity.baseMapActivity"
+            android:launchMode="singleTask"/>
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="ZZsILbSHgTENKaljHhN7RY3SCkerdn6B" />
+            android:value="aHphqdey2701EP88EidyxpnlVcWoFUMM" />
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote" />
+        <service
+            android:name=".service.XCService"
+            android:process=":remote">
+            <intent-filter>
+                <action android:name="com.wwm.gps.service.XCService" />
+            </intent-filter>
+        </service>
     </application>
 
     <!-- 这个权限用于进行网络定位-->
