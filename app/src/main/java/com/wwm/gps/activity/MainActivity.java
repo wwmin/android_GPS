@@ -2,11 +2,16 @@ package com.wwm.gps.activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.Settings;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,6 +19,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +54,7 @@ public class MainActivity extends BaseActivity{
     private String permissionInfo;
     public static MainActivity instance = null;
 
-
+    private LocationManager locationManager;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,32 +88,13 @@ public class MainActivity extends BaseActivity{
 //        startService(intent);
 
 
-
-//        setContentView(R.layout.activity_main);
-//        /*获得locationManager服务*/
-//        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//        boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-//        boolean network = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-//        if (gps) {
-//            getLocation();
-//        } else {
-//            openGPS();
-//            toggleGPS();
-//            new Handler() {
-//            }.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    getLocation();
-//                }
-//            }, 2000);
-//        }
-//        /*得到布局中的所有对象*/
-//        findView();
-//        setListener();
-////        login();
-//        btn_location_base.setOnClickListener(this);
-//        btn_map_base.setOnClickListener(this);
-//        btn_base_map.setOnClickListener(this);
+        /*获得locationManager服务*/
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean network = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        if (!gps) {
+            openGPS();
+        }
     }
     private void init() {
         tv_title = (TextView) findViewById(R.id.top_view_text);
@@ -234,5 +221,26 @@ public class MainActivity extends BaseActivity{
         } else {
             return super.onKeyDown(keyCode, event);
         }
+    }
+
+    private void openGPS() {
+        Toast.makeText(MainActivity.this, "请打开GPS", Toast.LENGTH_SHORT).show();
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage("请打开GPS");
+        dialog.setPositiveButton("去设置", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                    /*转到手机设置界面,用户设置GPS*/
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivityForResult(intent, 0);//设置完成后返回到原来的界面
+            }
+        });
+        dialog.setNeutralButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 }
