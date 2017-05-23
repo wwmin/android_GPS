@@ -89,7 +89,7 @@ public class baseMapActivity extends BaseActivity {
 
     private void init() {
         tv_title = (TextView) findViewById(R.id.top_view_text);
-        tv_title.setText(R.string.map_base);
+        tv_title.setText(R.string.base_map);
         iv_back = (ImageView) findViewById(R.id.top_view_back);
         iv_back.setVisibility(View.GONE);
 

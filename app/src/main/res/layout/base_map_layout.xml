@@ -54,7 +54,7 @@
                     android:paddingLeft="5dp"
                     android:layout_marginLeft="10dp"
                     android:background="@drawable/circle_frame_blue"
-                    android:text="待巡查"/>
+                    android:text="准备定位"/>
             </LinearLayout>
 
             <LinearLayout

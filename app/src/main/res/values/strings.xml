@@ -14,12 +14,13 @@
     <string name="stopLocation">停止定位</string>
     <string name="location_base">基础定位</string>
     <string name="map_base">基础地图</string>
+    <string name="base_map">地图连续定位</string>
     <string name="http_failed">网络错误</string>
 
     <string name="start_xc">开始定位</string>
     <string name="now_state">当前状态</string>
-    <string name="xc_time">用时</string>
-    <string name="xc_mileage">里程</string>
+    <string name="xc_time">连续用时</string>
+    <string name="xc_mileage">总计里程</string>
 
     <string name="home_01">无图定位</string>
     <string name="home_02">基础定位</string>
