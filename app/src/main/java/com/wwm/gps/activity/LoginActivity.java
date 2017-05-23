@@ -210,7 +210,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             }
             @Override
             public void onFailure(Throwable t, int errorNo, String strMsg) {
-                Toast.makeText(LoginActivity.this, getString(R.string.http_failed), Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "登录失败后的回调"+getString(R.string.http_failed), Toast.LENGTH_SHORT).show();
                 Log.e("error", errorNo+"");
             }
         });
@@ -222,34 +222,35 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
         AjaxParams params = new AjaxParams();
         params.put("", "1");
-
-        mHttp.post(UrlUtils.GET_SYSTEM_TITLE, params, new AjaxCallBack<String>() {
-            @Override
-            public void onSuccess(String content) {
-                Log.i("GET_SYSTEM_TITLE", content);
-                try {
-                    JSONObject jsonObj = new JSONObject(content);
-                    boolean result = jsonObj.getBoolean("result");
-                    if (result) {
-//                        JSONObject data = jsonObj.getJSONObject("data");
-                        String title = jsonObj.getString("data");
-                        String mTitle = title.replace("\\n", "\n");
-                        SPUtil.saveData(LoginActivity.this, Constant.SP_SYS_TITLE, mTitle);
-                        tv_login_title.setText(mTitle);
-
-                    } else {
-                        String error = jsonObj.getString("error");
-                        Toast.makeText(LoginActivity.this, error, Toast.LENGTH_SHORT).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            @Override
-            public void onFailure(Throwable t, int errorNo, String strMsg) {
-                Toast.makeText(LoginActivity.this, getString(R.string.http_failed), Toast.LENGTH_SHORT).show();
-                Log.e("error", errorNo+"");
-            }
-        });
+        SPUtil.saveData(LoginActivity.this, Constant.SP_SYS_TITLE, "GPS定位系统");
+        tv_login_title.setText("GPS定位系统");
+//        mHttp.post(UrlUtils.GET_SYSTEM_TITLE, params, new AjaxCallBack<String>() {
+//            @Override
+//            public void onSuccess(String content) {
+//                Log.i("GET_SYSTEM_TITLE", content);
+//                try {
+//                    JSONObject jsonObj = new JSONObject(content);
+//                    boolean result = jsonObj.getBoolean("result");
+//                    if (result) {
+////                        JSONObject data = jsonObj.getJSONObject("data");
+//                        String title = jsonObj.getString("data");
+//                        String mTitle = title.replace("\\n", "\n");
+//                        SPUtil.saveData(LoginActivity.this, Constant.SP_SYS_TITLE, mTitle);
+//                        tv_login_title.setText(mTitle);
+//
+//                    } else {
+//                        String error = jsonObj.getString("error");
+//                        Toast.makeText(LoginActivity.this, error, Toast.LENGTH_SHORT).show();
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            @Override
+//            public void onFailure(Throwable t, int errorNo, String strMsg) {
+//                Toast.makeText(LoginActivity.this, "获取app标题信息失败:"+getString(R.string.http_failed), Toast.LENGTH_SHORT).show();
+//                Log.e("error", errorNo+"");
+//            }
+//        });
     }
 }

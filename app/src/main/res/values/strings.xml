@@ -15,7 +15,7 @@
     <string name="location_base">基础定位</string>
     <string name="map_base">基础地图</string>
     <string name="base_map">地图连续定位</string>
-    <string name="http_failed">网络错误</string>
+    <string name="http_failed">网络错误12121212</string>
 
     <string name="start_xc">开始定位</string>
     <string name="now_state">当前状态</string>
