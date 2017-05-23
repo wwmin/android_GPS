@@ -148,7 +148,7 @@ public class mapActivity extends BaseActivity {
                     // 构建Marker图标
                     BitmapDescriptor bitmap = null;
                     if (iscal == 0) {
-                        bitmap = BitmapDescriptorFactory.fromResource(R.drawable.icon_openmap_focuse_mark_small); // 非推算结果
+                        bitmap = BitmapDescriptorFactory.fromResource(R.drawable.icon_openmap_focuse_mark); // 非推算结果
                     } else {
                         bitmap = BitmapDescriptorFactory.fromResource(R.drawable.ip_location); // 推算结果
                     }
