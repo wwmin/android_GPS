@@ -2,7 +2,9 @@ package com.wwm.gps.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -68,6 +70,30 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         httpGetSystemTitle();
     }
 
+    /**
+     * 6.0权限申请返回码
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 100:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+
+                } else {
+                    // Permission Denied
+                    Toast.makeText(LoginActivity.this, "权限申请失败,您的图片上传功能将无法使用,请您通过权限后重新登录", Toast.LENGTH_SHORT)
+                            .show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
 
     public void init() {
         tv_title = (TextView) findViewById(R.id.top_view_text);
@@ -164,7 +190,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void httpLogin(final UserInfo userInfo) {
-        showProgressDialog();
+        loadingDialog.show();
         FinalHttp mHttp = new FinalHttp();
         mHttp.configCharset("utf-8");
 
@@ -197,7 +223,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         }
                         MySetting.saveLogin(LoginActivity.this, userInfos, userInfo);
 
-                        hideProgressDialog();
+                        loadingDialog.dismiss();
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
@@ -205,11 +231,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     } else {
                         String error = jsonObj.getString("error");
                         Toast.makeText(LoginActivity.this, error, Toast.LENGTH_SHORT).show();
-                        hideProgressDialog();
+                        loadingDialog.dismiss();
                     }
 
                 } catch (JSONException e) {
-                    hideProgressDialog();
+                    loadingDialog.dismiss();
                     e.printStackTrace();
                 }
             }
@@ -218,7 +244,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             public void onFailure(Throwable t, int errorNo, String strMsg) {
                 Toast.makeText(LoginActivity.this, "登录失败后的回调" + getString(R.string.http_failed), Toast.LENGTH_SHORT).show();
                 Log.e("error", errorNo + "");
-                hideProgressDialog();
+                loadingDialog.dismiss();
             }
         });
     }
@@ -259,22 +285,5 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 //                Log.e("error", errorNo+"");
 //            }
 //        });
-    }
-
-    private void showProgressDialog() {
-        if (pd != null) {
-            pd.cancel();
-        }
-        pd = new ProgressDialog(this);
-        pd.setTitle("登录提示");
-        pd.setMessage("正在登录中...");
-        pd.show();
-    }
-
-    private void hideProgressDialog() {
-        if (pd != null) {
-            pd.dismiss();
-        }
-        pd = null;
     }
 }
