@@ -1,5 +1,6 @@
 package com.wwm.gps.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
@@ -41,7 +42,7 @@ import java.util.List;
  * Created by wwmin on 2017/5/22.
  */
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener{
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
     private DropEditText dep_name;
     private ArrayAdapter<String> dropAdapter;
     private EditText et_pwd;
@@ -51,10 +52,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
     private UserInfos userInfos = new UserInfos();
     private List<UserInfo> userList = new ArrayList<UserInfo>();
-    private static final int BAIDU_READ_PHONE_STATE =100;
+    private static final int BAIDU_READ_PHONE_STATE = 100;
+
+    private ProgressDialog pd;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -160,7 +163,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         }
     }
 
-    private void httpLogin(final UserInfo userInfo){
+    private void httpLogin(final UserInfo userInfo) {
+        showProgressDialog();
         FinalHttp mHttp = new FinalHttp();
         mHttp.configCharset("utf-8");
 
@@ -191,10 +195,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                         if (!cb_save_pwd.isChecked()) {
                             userInfo.LoginPass = "";
                         }
-
-
                         MySetting.saveLogin(LoginActivity.this, userInfos, userInfo);
 
+                        hideProgressDialog();
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
@@ -202,21 +205,25 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                     } else {
                         String error = jsonObj.getString("error");
                         Toast.makeText(LoginActivity.this, error, Toast.LENGTH_SHORT).show();
+                        hideProgressDialog();
                     }
 
                 } catch (JSONException e) {
+                    hideProgressDialog();
                     e.printStackTrace();
                 }
             }
+
             @Override
             public void onFailure(Throwable t, int errorNo, String strMsg) {
-                Toast.makeText(LoginActivity.this, "登录失败后的回调"+getString(R.string.http_failed), Toast.LENGTH_SHORT).show();
-                Log.e("error", errorNo+"");
+                Toast.makeText(LoginActivity.this, "登录失败后的回调" + getString(R.string.http_failed), Toast.LENGTH_SHORT).show();
+                Log.e("error", errorNo + "");
+                hideProgressDialog();
             }
         });
     }
 
-    private void httpGetSystemTitle(){
+    private void httpGetSystemTitle() {
         FinalHttp mHttp = new FinalHttp();
         mHttp.configCharset("utf-8");
 
@@ -252,5 +259,22 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 //                Log.e("error", errorNo+"");
 //            }
 //        });
+    }
+
+    private void showProgressDialog() {
+        if (pd != null) {
+            pd.cancel();
+        }
+        pd = new ProgressDialog(this);
+        pd.setTitle("登录提示");
+        pd.setMessage("正在登录中...");
+        pd.show();
+    }
+
+    private void hideProgressDialog() {
+        if (pd != null) {
+            pd.dismiss();
+        }
+        pd = null;
     }
 }
