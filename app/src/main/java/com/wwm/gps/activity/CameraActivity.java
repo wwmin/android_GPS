@@ -1,6 +1,7 @@
 package com.wwm.gps.activity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.maiml.wechatrecodervideolibrary.recoder.WechatRecoderActivity;
 import com.wwm.gps.R;
+import com.wwm.gps.utils.PermissionUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import cn.finalteam.galleryfinal.GalleryFinal;
 import cn.finalteam.galleryfinal.model.PhotoInfo;
 
 /**
@@ -81,18 +84,19 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
                 break;
             case R.id.tv_qlsb_detiale_video: //拍摄视频
                 if (videoPath != null && !videoPath.isEmpty()) {
-//                    play(videoPath);
+                    play(videoPath);
+                    Toast.makeText(this, "开始播放视频", Toast.LENGTH_SHORT).show();
                 } else {
-//                    if (Build.VERSION.SDK_INT >= 23) {
-//                        if (ContextCompat.checkSelfPermission(QLSBActivity.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-//                            WechatRecoderActivity.launchActivity(QLSBActivity.this, 1001);
-//                        } else {
-//                            PermissionUtil permissionUtil = new PermissionUtil();
-//                            permissionUtil.getVideoPermiss(this);
-//                        }
-//                    } else {
-//                        WechatRecoderActivity.launchActivity(QLSBActivity.this, 1001);
-//                    }
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        if (ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                            WechatRecoderActivity.launchActivity(CameraActivity.this, 1001);
+                        } else {
+                            PermissionUtil permissionUtil = new PermissionUtil();
+                            permissionUtil.getVideoPermiss(this);
+                        }
+                    } else {
+                        WechatRecoderActivity.launchActivity(CameraActivity.this, 1001);
+                    }
                 }
                 break;
             case R.id.btn_qlsb_add:
@@ -125,6 +129,48 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
                 break;
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 101 && resultCode == RESULT_OK) {
+//            httpSearchBridge();
+        } else {
+            if(RESULT_OK == resultCode){
+                if(requestCode == 1001){
+                    videoPath = data.getStringExtra(WechatRecoderActivity.VIDEO_PATH);
+                    tv_qlsb_detiale_video.setText("点击播放，长按重拍");
+                }
+            }
+        }
+    }
+
+    private void play(String videoPath) {
+//        startActivity(new Intent(this, PlayActivity.class).putExtra("path", videoPath));
+    }
+
+    private GalleryFinal.OnHanlderResultCallback mOnHanlderResultCallback = new GalleryFinal.OnHanlderResultCallback() {
+        @Override
+        public void onHanlderSuccess(int reqeustCode, List<PhotoInfo> resultList) {
+            if (resultList != null) {
+                mPhotoList.addAll(resultList);
+                tv_qlsb_detiale_pic.setText(mPhotoList.size()+"张");
+                imageList.clear();
+                for (int i = 0; i < mPhotoList.size(); i++) {
+                    imageList.add(mPhotoList.get(i).getPhotoPath());
+                }
+//                lksb.setImages(imageList);
+//                mChoosePhotoListAdapter.notifyDataSetChanged();
+//                String path = resultList.get(0).getPhotoPath();
+//                Glide.with(LKSBAddActivity.this).load("file://" + path).into(sdv_deadimg_mine);
+            }
+        }
+
+        @Override
+        public void onHanlderFailure(int requestCode, String errorMsg) {
+            Toast.makeText(CameraActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+        }
+    };
     /**
      * 上传文件到服务器
      * @param file 需要上传的文件
