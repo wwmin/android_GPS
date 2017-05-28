@@ -29,6 +29,9 @@
 
     <string name="update_pwd">修改密码</string>
     <string name="set_time">设置时间间隔</string>
+    <string name="add">添加</string>
+    <string name="click_choose">点击选择</string>
+    <string name="picVidio">拍摄照片和视频</string>
 </resources>
 
 

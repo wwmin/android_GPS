@@ -10,12 +10,10 @@ import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,9 +25,7 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.wwm.gps.R;
 import com.wwm.gps.adapter.MainMenuAdapter;
-import com.wwm.gps.bean.Company;
 import com.wwm.gps.bean.HomeMenu;
-import com.wwm.gps.bean.LoginInfo;
 import com.wwm.gps.constant.Constant;
 import com.wwm.gps.data.LocalData;
 import com.wwm.gps.dialog.TwoBtnDialog;
@@ -122,6 +118,10 @@ public class MainActivity extends BaseActivity{
                     case 3:
                         Intent advanceMapIntent = new Intent(MainActivity.this, baseMapActivity.class);
                         startActivity(advanceMapIntent);
+                        break;
+                    case 4:
+                        Intent cameraIntent = new Intent(MainActivity.this, CameraActivity.class);
+                        startActivity(cameraIntent);
                         break;
                     case 13:
                         Intent settingIntent = new Intent(MainActivity.this, SettingActivity.class);
