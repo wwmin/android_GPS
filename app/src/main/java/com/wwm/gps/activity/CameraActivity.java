@@ -55,7 +55,7 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
 
     private void init(){
         tv_title = (TextView) findViewById(R.id.top_view_text);
-        tv_title.setText(R.string.picVidio);
+        tv_title.setText(R.string.pic_video);
         iv_back = (ImageView) findViewById(R.id.top_view_back);
         iv_back.setVisibility(View.GONE);
 
