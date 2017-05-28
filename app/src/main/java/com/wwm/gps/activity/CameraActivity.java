@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.maiml.wechatrecodervideolibrary.recoder.WechatRecoderActivity;
 import com.wwm.gps.R;
 
 import org.json.JSONException;
@@ -66,7 +67,7 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
         tv_qlsb_detiale_video.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-//                WechatRecoderActivity.launchActivity(QLSBActivity.this, 1001);
+                WechatRecoderActivity.launchActivity(CameraActivity.this, 1001);
                 return false;
             }
         });
