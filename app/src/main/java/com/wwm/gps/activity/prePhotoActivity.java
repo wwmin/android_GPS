@@ -1,5 +1,7 @@
 package com.wwm.gps.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -37,6 +39,7 @@ public class prePhotoActivity extends BaseActivity implements View.OnClickListen
     private Button btn_back;
     private Button btn_album;
     private Button btn_take_photo;
+    private Button btn_clear_all;
     private TextView tv_photo_num;
     public static final int TAKE_PHOTO = 1;
     public static final int CROP_PHOTO = 2;
@@ -58,12 +61,13 @@ public class prePhotoActivity extends BaseActivity implements View.OnClickListen
         btn_back = (Button) this.findViewById(R.id.btn_back);
         btn_album = (Button) this.findViewById(R.id.btn_album);
         btn_take_photo = (Button) this.findViewById(R.id.btn_take_photo);
+        btn_clear_all = (Button) this.findViewById(R.id.btn_clear_all);
         tv_photo_num = (TextView) this.findViewById(R.id.tv_photo_num);
         gridView = (GridView) this.findViewById(R.id.gv_add_img);
         btn_back.setOnClickListener(this);
         btn_album.setOnClickListener(this);
         btn_take_photo.setOnClickListener(this);
-
+        btn_clear_all.setOnClickListener(this);
         imageItem = new ArrayList<HashMap<String, Object>>();
     }
 
@@ -76,15 +80,34 @@ public class prePhotoActivity extends BaseActivity implements View.OnClickListen
                 startActivity(intentBack);
                 break;
             case R.id.btn_album:
-//                Intent intentAlbum=new Intent();
-//                intentAlbum.setType("image/*");
-//                intentAlbum.setAction(Intent.ACTION_GET_CONTENT);
-//                startActivityForResult(intentAlbum,IMAGE_OPEN);
                 GalleryFinal.openGalleryMuti(Constant.REQUEST_CODE_GALLERY, IMAGE_NUM, mOnHandlerResultCallback);
                 break;
             case R.id.btn_take_photo:
                 GalleryFinal.openCamera(Constant.REQUEST_CODE_CAMERA, mOnHandlerResultCallback);
                 break;
+            case R.id.btn_clear_all:
+                if (gridView.getChildCount() > 0) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("确认清空已添加图片吗？");
+                    builder.setTitle("提示");
+                    builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            tv_photo_num.setText("0 张");
+                            int cnt = imageItem.size();
+                            for (int i = cnt - 1; i >= 0; i--) {
+                                imageItem.clear();
+                                simpleAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    });
+                    builder.setNegativeButton("取消", null);
+                    builder.create().show();
+                    break;
+                } else {
+                    Toast.makeText(prePhotoActivity.this, "已清空",
+                            Toast.LENGTH_LONG).show();
+                }
             default:
                 break;
         }
