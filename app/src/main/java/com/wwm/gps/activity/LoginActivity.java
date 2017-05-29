@@ -1,7 +1,11 @@
 package com.wwm.gps.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -37,11 +41,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Created by wwmin on 2017/5/22.
  */
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener{
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
     private DropEditText dep_name;
     private ArrayAdapter<String> dropAdapter;
     private EditText et_pwd;
@@ -51,10 +57,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
     private UserInfos userInfos = new UserInfos();
     private List<UserInfo> userList = new ArrayList<UserInfo>();
-    private static final int BAIDU_READ_PHONE_STATE =100;
+    private static final int BAIDU_READ_PHONE_STATE = 100;
+
+    private ProgressDialog pd;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -65,6 +73,30 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         httpGetSystemTitle();
     }
 
+    /**
+     * 6.0权限申请返回码
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 100:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+
+                } else {
+                    // Permission Denied
+                    Toast.makeText(LoginActivity.this, "权限申请失败,您的图片上传功能将无法使用,请您通过权限后重新登录", Toast.LENGTH_SHORT)
+                            .show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
 
     public void init() {
         tv_title = (TextView) findViewById(R.id.top_view_text);
@@ -160,7 +192,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         }
     }
 
-    private void httpLogin(final UserInfo userInfo){
+    private void httpLogin(final UserInfo userInfo) {
+        loadingDialog.show();
         FinalHttp mHttp = new FinalHttp();
         mHttp.configCharset("utf-8");
 
@@ -191,10 +224,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                         if (!cb_save_pwd.isChecked()) {
                             userInfo.LoginPass = "";
                         }
-
-
                         MySetting.saveLogin(LoginActivity.this, userInfos, userInfo);
 
+                        loadingDialog.dismiss();
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
@@ -202,54 +234,59 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                     } else {
                         String error = jsonObj.getString("error");
                         Toast.makeText(LoginActivity.this, error, Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
                     }
 
                 } catch (JSONException e) {
+                    loadingDialog.dismiss();
                     e.printStackTrace();
                 }
             }
+
             @Override
             public void onFailure(Throwable t, int errorNo, String strMsg) {
-                Toast.makeText(LoginActivity.this, getString(R.string.http_failed), Toast.LENGTH_SHORT).show();
-                Log.e("error", errorNo+"");
+                Toast.makeText(LoginActivity.this, "登录失败后的回调" + getString(R.string.http_failed), Toast.LENGTH_SHORT).show();
+                Log.e("error", errorNo + "");
+                loadingDialog.dismiss();
             }
         });
     }
 
-    private void httpGetSystemTitle(){
+    private void httpGetSystemTitle() {
         FinalHttp mHttp = new FinalHttp();
         mHttp.configCharset("utf-8");
 
         AjaxParams params = new AjaxParams();
         params.put("", "1");
-
-        mHttp.post(UrlUtils.GET_SYSTEM_TITLE, params, new AjaxCallBack<String>() {
-            @Override
-            public void onSuccess(String content) {
-                Log.i("GET_SYSTEM_TITLE", content);
-                try {
-                    JSONObject jsonObj = new JSONObject(content);
-                    boolean result = jsonObj.getBoolean("result");
-                    if (result) {
-//                        JSONObject data = jsonObj.getJSONObject("data");
-                        String title = jsonObj.getString("data");
-                        String mTitle = title.replace("\\n", "\n");
-                        SPUtil.saveData(LoginActivity.this, Constant.SP_SYS_TITLE, mTitle);
-                        tv_login_title.setText(mTitle);
-
-                    } else {
-                        String error = jsonObj.getString("error");
-                        Toast.makeText(LoginActivity.this, error, Toast.LENGTH_SHORT).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            @Override
-            public void onFailure(Throwable t, int errorNo, String strMsg) {
-                Toast.makeText(LoginActivity.this, getString(R.string.http_failed), Toast.LENGTH_SHORT).show();
-                Log.e("error", errorNo+"");
-            }
-        });
+        SPUtil.saveData(LoginActivity.this, Constant.SP_SYS_TITLE, "GPS定位系统");
+        tv_login_title.setText("GPS定位系统");
+//        mHttp.post(UrlUtils.GET_SYSTEM_TITLE, params, new AjaxCallBack<String>() {
+//            @Override
+//            public void onSuccess(String content) {
+//                Log.i("GET_SYSTEM_TITLE", content);
+//                try {
+//                    JSONObject jsonObj = new JSONObject(content);
+//                    boolean result = jsonObj.getBoolean("result");
+//                    if (result) {
+////                        JSONObject data = jsonObj.getJSONObject("data");
+//                        String title = jsonObj.getString("data");
+//                        String mTitle = title.replace("\\n", "\n");
+//                        SPUtil.saveData(LoginActivity.this, Constant.SP_SYS_TITLE, mTitle);
+//                        tv_login_title.setText(mTitle);
+//
+//                    } else {
+//                        String error = jsonObj.getString("error");
+//                        Toast.makeText(LoginActivity.this, error, Toast.LENGTH_SHORT).show();
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            @Override
+//            public void onFailure(Throwable t, int errorNo, String strMsg) {
+//                Toast.makeText(LoginActivity.this, "获取app标题信息失败:"+getString(R.string.http_failed), Toast.LENGTH_SHORT).show();
+//                Log.e("error", errorNo+"");
+//            }
+//        });
     }
 }

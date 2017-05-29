@@ -33,7 +33,7 @@ import java.util.List;
  * Created by wwm on 2017/5/12.
  */
 
-public class mapActivity extends Activity {
+public class mapActivity extends BaseActivity {
     MapView mMapView = null;
     private BaiduMap mBaiduMap;
 
@@ -148,7 +148,7 @@ public class mapActivity extends Activity {
                     // 构建Marker图标
                     BitmapDescriptor bitmap = null;
                     if (iscal == 0) {
-                        bitmap = BitmapDescriptorFactory.fromResource(R.drawable.icon_openmap_focuse_mark_small); // 非推算结果
+                        bitmap = BitmapDescriptorFactory.fromResource(R.drawable.icon_openmap_focuse_mark); // 非推算结果
                     } else {
                         bitmap = BitmapDescriptorFactory.fromResource(R.drawable.ip_location); // 推算结果
                     }

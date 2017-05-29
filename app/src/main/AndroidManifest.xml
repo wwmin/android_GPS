@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.wwm.gps">
 
     <uses-sdk
@@ -8,52 +9,71 @@
     <application
         android:name="com.wwm.gps.application.LocationApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/icon_app"
+        android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppBaseTheme">
-        <activity android:name=".activity.LoginActivity" >
+        android:theme="@style/AppThemeNoActionBar"
+        tools:replace="android:icon,android:theme">
+        <activity android:name=".activity.StartActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--<activity-->
-            <!--android:name=".activity.MainActivity"-->
-            <!--android:launchMode="singleTask"-->
-            <!--android:label="@string/app_name">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        <!--</activity>-->
 
-        <activity android:name=".activity.MainActivity"
-            android:launchMode="singleTask">
-        </activity>
+        <activity
+            android:name=".activity.LoginActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.MainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.TestActivity"
-            ></activity>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".activity.mapActivity"
             android:launchMode="singleTask"
-            ></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.baseMapActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.CameraActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <!-- 录制视频activity -->
+        <activity android:name="com.maiml.wechatrecodervideolibrary.recoder.WechatRecoderActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CameraTheme"
+            />
+        <activity
+            android:name=".activity.PlayActivity"
+            android:launchMode="standard"/>
+
         <activity
             android:name=".activity.SettingActivity"
-            android:launchMode="standard"/>
+            android:launchMode="standard"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.UpdatePwdActivity"
-            android:launchMode="standard"/>
+            android:launchMode="standard"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.SetTimeActivity"
-            android:launchMode="standard"/>
+            android:launchMode="standard"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="aHphqdey2701EP88EidyxpnlVcWoFUMM" />
+
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
@@ -67,7 +87,9 @@
         </service>
         <service
             android:name=".service.DownloadService"
-            android:enabled="true"/>
+            android:enabled="true" />
+
+
     </application>
 
     <!-- 这个权限用于进行网络定位-->
@@ -89,7 +111,11 @@
     <!-- SD卡读取权限，用户写入离线定位数据-->
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.GET_TASKS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
-
+    <!--使用相机-->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 </manifest>

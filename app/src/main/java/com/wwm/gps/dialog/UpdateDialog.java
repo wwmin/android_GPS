@@ -92,7 +92,7 @@ public class UpdateDialog {
 			}
 
 			public void onFailure(Throwable t, int errorNo, String strMsg) {
-				Toast.makeText(context, "网络错误", Toast.LENGTH_SHORT).show();
+//				Toast.makeText(context, "updateDialog:网络错误", Toast.LENGTH_SHORT).show();
 			}
 		});
 	}

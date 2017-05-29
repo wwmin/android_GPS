@@ -2,34 +2,52 @@ package com.wwm.gps.activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.wwm.gps.R;
 import com.wwm.gps.adapter.MainMenuAdapter;
-import com.wwm.gps.bean.Company;
 import com.wwm.gps.bean.HomeMenu;
-import com.wwm.gps.bean.LoginInfo;
 import com.wwm.gps.constant.Constant;
 import com.wwm.gps.data.LocalData;
 import com.wwm.gps.dialog.TwoBtnDialog;
 import com.wwm.gps.dialog.UpdateDialog;
+import com.wwm.gps.loader.GlideImageLoader;
+import com.wwm.gps.loader.GlidePauseOnScrollListener;
 import com.wwm.gps.service.XCService;
 import com.wwm.gps.utils.SPUtil;
+import com.yixia.camera.VCamera;
+import com.yixia.camera.util.DeviceUtils;
+
+import cn.finalteam.galleryfinal.CoreConfig;
+import cn.finalteam.galleryfinal.FunctionConfig;
+import cn.finalteam.galleryfinal.GalleryFinal;
+import cn.finalteam.galleryfinal.ThemeConfig;
 
 //import org.apache.http.Header;
 
@@ -48,7 +66,7 @@ public class MainActivity extends BaseActivity{
     private String permissionInfo;
     public static MainActivity instance = null;
 
-
+    private LocationManager locationManager;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,32 +100,19 @@ public class MainActivity extends BaseActivity{
 //        startService(intent);
 
 
+        /*获得locationManager服务*/
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean network = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        if (!gps) {
+            openGPS();
+        }
 
-//        setContentView(R.layout.activity_main);
-//        /*获得locationManager服务*/
-//        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//        boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-//        boolean network = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-//        if (gps) {
-//            getLocation();
-//        } else {
-//            openGPS();
-//            toggleGPS();
-//            new Handler() {
-//            }.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    getLocation();
-//                }
-//            }, 2000);
-//        }
-//        /*得到布局中的所有对象*/
-//        findView();
-//        setListener();
-////        login();
-//        btn_location_base.setOnClickListener(this);
-//        btn_map_base.setOnClickListener(this);
-//        btn_base_map.setOnClickListener(this);
+        initImageLoader();
+
+        initGalleryFinal();
+
+        initVideo();
     }
     private void init() {
         tv_title = (TextView) findViewById(R.id.top_view_text);
@@ -135,6 +140,10 @@ public class MainActivity extends BaseActivity{
                     case 3:
                         Intent advanceMapIntent = new Intent(MainActivity.this, baseMapActivity.class);
                         startActivity(advanceMapIntent);
+                        break;
+                    case 4:
+                        Intent cameraIntent = new Intent(MainActivity.this, CameraActivity.class);
+                        startActivity(cameraIntent);
                         break;
                     case 13:
                         Intent settingIntent = new Intent(MainActivity.this, SettingActivity.class);
@@ -234,5 +243,94 @@ public class MainActivity extends BaseActivity{
         } else {
             return super.onKeyDown(keyCode, event);
         }
+    }
+
+    private void openGPS() {
+        Toast.makeText(MainActivity.this, "请打开GPS", Toast.LENGTH_SHORT).show();
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage("请打开GPS");
+        dialog.setPositiveButton("去设置", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                    /*转到手机设置界面,用户设置GPS*/
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivityForResult(intent, 0);//设置完成后返回到原来的界面
+            }
+        });
+        dialog.setNeutralButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+    /**
+     * ImageLoader创建及初始化
+     *
+     * @param
+     */
+    private void initImageLoader() {
+        // 创建默认的ImageLoader配置参数
+        DisplayImageOptions options = new DisplayImageOptions.Builder().showStubImage(R.drawable.icon_stub) // 设置图片下载期间显示的图片
+                .showImageForEmptyUri(R.drawable.icon_empty) // 设置图片Uri为空或是错误的时候显示的图片
+                .showImageOnFail(R.drawable.icon_error) // 设置图片加载或解码过程中发生错误显示的图片
+                .cacheInMemory(true) // 设置下载的图片是否缓存在内存中
+                .cacheOnDisc(true) // 设置下载的图片是否缓存在SD卡中
+                // .displayer(new RoundedBitmapDisplayer(20)) // 设置成圆角图片
+                .build(); // 创建配置过得DisplayImageOption对象
+
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext()).defaultDisplayImageOptions(options)
+                .threadPriority(Thread.NORM_PRIORITY - 2).denyCacheImageMultipleSizesInMemory()
+                .discCacheFileNameGenerator(new Md5FileNameGenerator()).tasksProcessingOrder(QueueProcessingType.LIFO).build();
+        ImageLoader.getInstance().init(config);
+
+    }
+    public void initGalleryFinal(){
+
+        //设置主题
+        ThemeConfig theme = ThemeConfig.CYAN;
+//        ThemeConfig theme = new ThemeConfig.Builder()
+//                .build();
+
+        String imgPath = Environment.getExternalStorageDirectory() + "/road" + "/images/";
+        File mFile = new File(imgPath);
+        //配置功能
+        FunctionConfig functionConfig = new FunctionConfig.Builder()
+                .setEnableCamera(false)
+                .setEnableEdit(false)
+                .setEnableCrop(true)
+                .setEnableRotate(true)
+                .setCropSquare(true)
+                .setEnablePreview(true)
+                .build();
+        CoreConfig coreConfig = new CoreConfig.Builder(this, new GlideImageLoader(), theme)
+                .setFunctionConfig(functionConfig)
+                .setAnimation(0)
+                .setTakePhotoFolder(mFile)
+                .setPauseOnScrollListener(new GlidePauseOnScrollListener(false, true))
+                .build();
+        GalleryFinal.init(coreConfig);
+    }
+    private void initVideo () {
+        //设置拍摄视频缓存路径
+        File dcim = Environment.getExternalStorageDirectory();
+        if (DeviceUtils.isZte()) {
+            if (dcim.exists()) {
+                VCamera.setVideoCachePath(dcim + "/road/recoder/");
+            } else {
+                VCamera.setVideoCachePath(dcim.getPath().replace("/sdcard/",
+                        "/sdcard-ext/")
+                        + "/recoder/");
+            }
+        } else {
+            VCamera.setVideoCachePath(dcim + "/road/recoder/");
+        }
+
+//		VCamera.setVideoCachePath(FileUtils.getRecorderPath());
+        // 开启log输出,ffmpeg输出到logcat
+        VCamera.setDebugMode(true);
+        // 初始化拍摄SDK，必须
+        VCamera.initialize(this);
     }
 }
