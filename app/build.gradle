@@ -7,9 +7,13 @@ android {
     defaultConfig {
         applicationId "com.wwm.gps"
         minSdkVersion 19
-        targetSdkVersion 20
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
+
+        ndk {
+            abiFilters 'armeabi', 'x86', 'armeabi-v7a'//, 'armeabi-v7a', 'x86_64', 'arm64-v8a', mips, mips64
+        }
     }
     buildTypes {
         release {
@@ -22,6 +26,13 @@ android {
             jniLibs.srcDirs = ['libs']
         }
     }
+    android {
+        useLibrary 'org.apache.http.legacy'
+    }
+
+    repositories {
+        maven { url "https://jitpack.io" }
+    }
 }
 
 dependencies {
@@ -31,9 +42,13 @@ dependencies {
     compile files('libs/BaiduLBS_Android.jar')
     compile files('libs/afinal_0.5.1_bin.jar')
     compile 'com.android.support:support-annotations:26.0.0-alpha1'
+    compile 'cn.finalteam:galleryfinal:1.4.8.7'
     compile 'com.google.code.gson:gson:2.2.4'
+    compile 'com.github.bumptech.glide:glide:3.6.1'
     compile 'com.android.support:appcompat-v7:23.0.0+'
     compile 'com.android.support:support-v4:23.0.0+'
+    compile project(':wechatRecoderVideoLibrary')
+    compile files('libs/universal-image-loader-1.9.3.jar')
 }
 
 

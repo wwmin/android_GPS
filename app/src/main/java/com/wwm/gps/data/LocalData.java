@@ -33,6 +33,14 @@ public class LocalData {
         list.add(menu03);
 
 
+        HomeMenu menu04 = new HomeMenu();
+        menu04.setId(4);
+        menu04.setName("拍照视频");
+        menu04.setImg(R.drawable.home_icon_04);
+        list.add(menu04);
+
+
+
         HomeMenu menu13 = new HomeMenu();
         menu13.setId(13);
         menu13.setName("系统设置");
