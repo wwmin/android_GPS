@@ -50,6 +50,7 @@ import cn.finalteam.galleryfinal.model.PhotoInfo;
 public class CameraActivity extends BaseActivity implements View.OnClickListener {
     private TextView tv_qlsb_detiale_pic;
     private TextView tv_qlsb_detiale_video;
+    private TextView tv_pre_photo;
 
     private final int IMAGE_NUM = 6;
     private List<String> imageList = new ArrayList<>();
@@ -75,6 +76,8 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
         btn_qlsb_add.setOnClickListener(this);
         tv_qlsb_detiale_pic = (TextView) findViewById(R.id.tv_qlsb_detiale_pic);
         tv_qlsb_detiale_pic.setOnClickListener(this);
+        tv_pre_photo = (TextView) findViewById(R.id.tv_pre_photo);
+        tv_pre_photo.setOnClickListener(this);
         tv_qlsb_detiale_video = (TextView) findViewById(R.id.tv_qlsb_detiale_video);
         tv_qlsb_detiale_video.setOnClickListener(this);
         tv_qlsb_detiale_video.setOnLongClickListener(new View.OnLongClickListener() {
@@ -91,6 +94,10 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
         switch (v.getId()) {
             case R.id.tv_qlsb_detiale_pic: //选择图片
                 showCheckDialog();
+                break;
+            case R.id.tv_pre_photo:
+                Intent intent = new Intent(CameraActivity.this, prePhotoActivity.class);
+                startActivity(intent);
                 break;
             case R.id.tv_qlsb_detiale_video: //拍摄视频
                 if (videoPath != null && !videoPath.isEmpty()) {
@@ -185,7 +192,7 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
 
     private GalleryFinal.OnHanlderResultCallback mOnHanlderResultCallback = new GalleryFinal.OnHanlderResultCallback() {
         @Override
-        public void onHanlderSuccess(int reqeustCode, List<PhotoInfo> resultList) {
+        public void onHanlderSuccess(int requestCode, List<PhotoInfo> resultList) {
             if (resultList != null) {
                 mPhotoList.addAll(resultList);
                 tv_qlsb_detiale_pic.setText(mPhotoList.size() + "张");
@@ -340,4 +347,15 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
             }
         }
     };
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Intent intent = getIntent();
+        String number = intent.getStringExtra("Number");
+        if (number == null) {
+            number = "0";
+        }
+        tv_pre_photo.setText(number);
+    }
 }

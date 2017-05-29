@@ -24,11 +24,11 @@
         <activity
             android:name=".activity.LoginActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.MainActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.TestActivity"
             android:screenOrientation="portrait" />
@@ -45,17 +45,21 @@
             android:name=".activity.CameraActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.prePhotoActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <!-- 录制视频activity -->
-        <activity android:name="com.maiml.wechatrecodervideolibrary.recoder.WechatRecoderActivity"
+        <activity
+            android:name="com.maiml.wechatrecodervideolibrary.recoder.WechatRecoderActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:hardwareAccelerated="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/CameraTheme"
-            />
+            android:theme="@style/CameraTheme" />
         <activity
             android:name=".activity.PlayActivity"
-            android:launchMode="standard"/>
+            android:launchMode="standard" />
 
         <activity
             android:name=".activity.SettingActivity"
