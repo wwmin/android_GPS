@@ -20,4 +20,6 @@ public class UrlUtils {
     public static final String GET_VERSION = URL + "SystemInfo/GetVersion";
     //设置间隔时间（秒）
     public static final String SET_USERGPS_TIME = URL + "GpsInfo/SetGpsTime";
+    //上传视频
+    public static final String UPLOAD_VIDEO = URL + "GpsInfo/SetGpsTime";
 }

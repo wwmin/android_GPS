@@ -11,12 +11,18 @@ import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.maiml.wechatrecodervideolibrary.recoder.WechatRecoderActivity;
 import com.wwm.gps.R;
+import com.wwm.gps.bean.Item;
+import com.wwm.gps.constant.Constant;
+import com.wwm.gps.constant.UrlUtils;
+import com.wwm.gps.dialog.SelectListDialog;
 import com.wwm.gps.utils.PermissionUtil;
 
 import org.json.JSONException;
@@ -50,6 +56,8 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
     private String LOCAL_IMAGE_PATH = Environment.getExternalStorageDirectory() + "/road";
     public List<PhotoInfo> mPhotoList = new ArrayList<>();
     private String videoPath;
+    private Button btn_qlsb_add;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,12 +65,14 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
         init();
     }
 
-    private void init(){
+    private void init() {
         tv_title = (TextView) findViewById(R.id.top_view_text);
         tv_title.setText(R.string.pic_video);
         iv_back = (ImageView) findViewById(R.id.top_view_back);
         iv_back.setVisibility(View.GONE);
 
+        btn_qlsb_add = (Button) findViewById(R.id.btn_qlsb_add);
+        btn_qlsb_add.setOnClickListener(this);
         tv_qlsb_detiale_pic = (TextView) findViewById(R.id.tv_qlsb_detiale_pic);
         tv_qlsb_detiale_pic.setOnClickListener(this);
         tv_qlsb_detiale_video = (TextView) findViewById(R.id.tv_qlsb_detiale_video);
@@ -77,10 +87,10 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
     }
 
     @Override
-    public void onClick(View v){
-        switch (v.getId()){
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.tv_qlsb_detiale_pic: //选择图片
-//                showCheckDialog();
+                showCheckDialog();
                 break;
             case R.id.tv_qlsb_detiale_video: //拍摄视频
                 if (videoPath != null && !videoPath.isEmpty()) {
@@ -117,15 +127,14 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
 ////                    btn_qlsb_add.setClickable(false);
 ////                    btn_qlsb_add.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_circle_blue_light));
 ////                    httpAddBridgeInfo();
-//                    loadingDialog.show();
-//                    //上传视频
-//                    if (videoPath != null && !videoPath.isEmpty()) {
-//                        File file = new File(videoPath);
-//                        uploadFile(file, UrlUtils.UPLOAD_VIDEO);
-//                    } else {
-//                        httpAddBridgeInfo("");
-//                    }
-//                }
+//                btn_qlsb_add.setClickable(false);
+//                btn_qlsb_add.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_circle_blue_light));
+                loadingDialog.show();
+                //上传视频
+                if (videoPath != null && !videoPath.isEmpty()) {
+                    File file = new File(videoPath);
+                    uploadFile(file, UrlUtils.UPLOAD_VIDEO);
+                }
                 break;
         }
     }
@@ -136,8 +145,8 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
         if (requestCode == 101 && resultCode == RESULT_OK) {
 //            httpSearchBridge();
         } else {
-            if(RESULT_OK == resultCode){
-                if(requestCode == 1001){
+            if (RESULT_OK == resultCode) {
+                if (requestCode == 1001) {
                     videoPath = data.getStringExtra(WechatRecoderActivity.VIDEO_PATH);
                     tv_qlsb_detiale_video.setText("点击播放，长按重拍");
                 }
@@ -146,7 +155,32 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void play(String videoPath) {
-//        startActivity(new Intent(this, PlayActivity.class).putExtra("path", videoPath));
+        startActivity(new Intent(this, PlayActivity.class).putExtra("path", videoPath));
+    }
+
+    private void showCheckDialog() {
+        List<Item> menuList = new ArrayList<>();
+        Item item1 = new Item();
+        item1.setTitle("拍照");
+        menuList.add(item1);
+        Item item2 = new Item();
+        item2.setTitle("从图库中选择");
+        menuList.add(item2);
+        final SelectListDialog selectListDialog = new SelectListDialog();
+        selectListDialog.showdialog(CameraActivity.this, "", menuList);
+        selectListDialog.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    GalleryFinal.openCamera(Constant.REQUEST_CODE_CAMERA, mOnHanlderResultCallback);
+                } else if (position == 1) {
+                    GalleryFinal.openGalleryMuti(Constant.REQUEST_CODE_GALLERY, IMAGE_NUM, mOnHanlderResultCallback);
+                }
+                selectListDialog.getDialog().dismiss();
+            }
+        });
+
     }
 
     private GalleryFinal.OnHanlderResultCallback mOnHanlderResultCallback = new GalleryFinal.OnHanlderResultCallback() {
@@ -154,7 +188,7 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
         public void onHanlderSuccess(int reqeustCode, List<PhotoInfo> resultList) {
             if (resultList != null) {
                 mPhotoList.addAll(resultList);
-                tv_qlsb_detiale_pic.setText(mPhotoList.size()+"张");
+                tv_qlsb_detiale_pic.setText(mPhotoList.size() + "张");
                 imageList.clear();
                 for (int i = 0; i < mPhotoList.size(); i++) {
                     imageList.add(mPhotoList.get(i).getPhotoPath());
@@ -171,9 +205,11 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
             Toast.makeText(CameraActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
         }
     };
+
     /**
      * 上传文件到服务器
-     * @param file 需要上传的文件
+     *
+     * @param file       需要上传的文件
      * @param RequestURL 请求的rul
      * @return 返回响应的内容
      */
@@ -271,8 +307,6 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
                             bundle.putString("path", path);
                             msg.setData(bundle);
                             handler.sendMessage(msg);
-
-
                         } else {
                             Log.e(TAG, "request error");
                             loadingDialog.dismiss();
