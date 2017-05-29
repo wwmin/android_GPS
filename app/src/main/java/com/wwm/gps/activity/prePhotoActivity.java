@@ -6,9 +6,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import cn.finalteam.galleryfinal.GalleryFinal;
@@ -40,6 +45,11 @@ public class prePhotoActivity extends BaseActivity implements View.OnClickListen
     private final int IMAGE_NUM = 6;
     private List<String> imageList = new ArrayList<>();
     public List<PhotoInfo> mPhotoList = new ArrayList<>();
+    //    private String pathImage;                //选择图片路径
+    private ArrayList<HashMap<String, Object>> imageItem;
+    private SimpleAdapter simpleAdapter; // 适配器
+
+    private GridView gridView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,9 +59,12 @@ public class prePhotoActivity extends BaseActivity implements View.OnClickListen
         btn_album = (Button) this.findViewById(R.id.btn_album);
         btn_take_photo = (Button) this.findViewById(R.id.btn_take_photo);
         tv_photo_num = (TextView) this.findViewById(R.id.tv_photo_num);
+        gridView = (GridView) this.findViewById(R.id.gv_add_img);
         btn_back.setOnClickListener(this);
         btn_album.setOnClickListener(this);
         btn_take_photo.setOnClickListener(this);
+
+        imageItem = new ArrayList<HashMap<String, Object>>();
     }
 
     @Override
@@ -86,6 +99,9 @@ public class prePhotoActivity extends BaseActivity implements View.OnClickListen
                 imageList.clear();
                 for (int i = 0; i < mPhotoList.size(); i++) {
                     imageList.add(mPhotoList.get(i).getPhotoPath());
+                }
+                for (int j = 0; j < resultList.size(); j++) {
+                    showImage(resultList.get(j).getPhotoPath());
                 }
 //                lksb.setImages(imageList);
 //                mChoosePhotoListAdapter.notifyDataSetChanged();
@@ -146,6 +162,42 @@ public class prePhotoActivity extends BaseActivity implements View.OnClickListen
             } catch (Exception e) {
                 Log.w("拾取照片错误:", e);
             }
+        }
+    }
+
+
+    //刷新图片
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    private void showImage(String pathImage) {
+        if (!TextUtils.isEmpty(pathImage)) {
+            Bitmap addbmp = BitmapFactory.decodeFile(pathImage);
+            HashMap<String, Object> map = new HashMap<String, Object>();
+            map.put("itemImage", addbmp);
+            imageItem.add(map);
+            simpleAdapter = new SimpleAdapter(this,
+                    imageItem, R.layout.griditem_addpic,
+                    new String[]{"itemImage"}, new int[]{R.id.img_add});
+            simpleAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
+                @Override
+                public boolean setViewValue(View view, Object data,
+                                            String textRepresentation) {
+                    // TODO Auto-generated method stub
+                    if (view instanceof ImageView && data instanceof Bitmap) {
+                        ImageView i = (ImageView) view;
+                        i.setImageBitmap((Bitmap) data);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            gridView.setAdapter(simpleAdapter);
+            simpleAdapter.notifyDataSetChanged();
+            //刷新后释放防止手机休眠后自动添加
+            pathImage = null;
         }
     }
 }
