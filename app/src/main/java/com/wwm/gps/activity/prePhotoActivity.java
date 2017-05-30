@@ -3,6 +3,7 @@ package com.wwm.gps.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,6 +12,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -62,6 +65,14 @@ public class prePhotoActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+         /*
+         * 防止键盘挡住输入框
+         * 不希望遮挡设置activity属性 android:windowSoftInputMode="adjustPan"
+         * 希望动态调整高度 android:windowSoftInputMode="adjustResize"
+         */
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        //锁定屏幕方向
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.photo_image_layout);
         btn_back = (Button) this.findViewById(R.id.btn_back);
         btn_album = (Button) this.findViewById(R.id.btn_album);
@@ -87,6 +98,45 @@ public class prePhotoActivity extends BaseActivity implements View.OnClickListen
             i++;
         }
         tv_photo_num.setText(imageNum + " 张");
+
+        initGridViewEvent();
+    }
+
+    private void initGridViewEvent() {
+          /*
+         * 监听GridView点击事件
+         */
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+
+            }
+        });
+        /*
+        * 长按点击事件
+        * */
+        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
+//                final TwoBtnDialog btnDialog = new TwoBtnDialog();
+//                final int pos=position;
+//                btnDialog.showdialog(prePhotoActivity.this, "确定删除该图片吗?", "确定", "取消");
+//                btnDialog.getBtnOk().setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        imageItem.remove(pos);
+//                        mPhotoList.remove(pos);
+//                        tv_photo_num.setText(imageItem.size()+" 张");
+//                        Log.i("IMAGE_ITEM______:",imageItem.toString());
+//                        String il=listToString(imageItem,'|');
+//                        SPUtil.saveData(prePhotoActivity.this,Constant.IMAGE_LIST,il);
+//                        simpleAdapter.notifyDataSetChanged();
+//                        btnDialog.getDialog().cancel();
+//                    }
+//                });
+                return true;
+            }
+        });
     }
 
     @Override
@@ -99,6 +149,9 @@ public class prePhotoActivity extends BaseActivity implements View.OnClickListen
                 break;
             case R.id.btn_album:
                 GalleryFinal.openGalleryMuti(Constant.REQUEST_CODE_GALLERY, IMAGE_NUM, mOnHandlerResultCallback);
+                ///*选择图片的最基本方式*/
+                //Intent intent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                //startActivityForResult(intent, IMAGE_OPEN);
                 break;
             case R.id.btn_take_photo:
                 GalleryFinal.openCamera(Constant.REQUEST_CODE_CAMERA, mOnHandlerResultCallback);
@@ -132,9 +185,9 @@ public class prePhotoActivity extends BaseActivity implements View.OnClickListen
         @Override
         public void onHanlderSuccess(int requestCode, List<PhotoInfo> resultList) {
             if (resultList != null) {
-                mPhotoList.addAll(resultList);
-                tv_photo_num.setText(mPhotoList.size() + " 张");
+                mPhotoList.clear();
                 imageList.clear();
+                mPhotoList.addAll(resultList);
                 for (int i = 0; i < mPhotoList.size(); i++) {
                     imageList.add(mPhotoList.get(i).getPhotoPath());
                 }
@@ -143,7 +196,20 @@ public class prePhotoActivity extends BaseActivity implements View.OnClickListen
                 }
                 String il = listToString(imageList, '|');
                 Log.i("图片路径:", il);
-                SPUtil.saveData(prePhotoActivity.this, Constant.IMAGE_LIST, il);
+
+                String ips = SPUtil.getData(prePhotoActivity.this, Constant.IMAGE_LIST, "").toString();
+                String[] imagePaths = ips.split("\\|");
+                int len = imagePaths.length;
+                int i = 0;
+                int imageNum = 0;
+                while (i < len) {
+                    if (!imagePaths[i].isEmpty()) {
+                        imageNum++;
+                    }
+                    i++;
+                }
+                tv_photo_num.setText(imageNum + mPhotoList.size() + " 张");
+                SPUtil.saveData(prePhotoActivity.this, Constant.IMAGE_LIST, ips + '|' + il);
 //                lksb.setImages(imageList);
 //                mChoosePhotoListAdapter.notifyDataSetChanged();
 //                String path = resultList.get(0).getPhotoPath();

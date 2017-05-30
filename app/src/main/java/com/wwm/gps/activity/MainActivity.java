@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -202,13 +203,33 @@ public class MainActivity extends BaseActivity{
         }
     }
 
+    /**
+     * 6.0权限申请返回码
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @TargetApi(23)
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        // TODO Auto-generated method stub
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 100:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
 
+                } else {
+                    // Permission Denied
+                    Toast.makeText(MainActivity.this, "权限申请失败,您的图片上传功能将无法使用,请您通过权限后重新登录", Toast.LENGTH_SHORT)
+                            .show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
+
+
     @Override
     protected void onDestroy() {
 //        Intent intent = new Intent(MainActivity.this, DWService.class);

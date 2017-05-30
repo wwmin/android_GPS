@@ -24,7 +24,7 @@ public class StartActivity extends Activity {
         setContentView(R.layout.start_layout);
         welcomeImg = (ImageView) this.findViewById(R.id.welcome_img);
         AlphaAnimation anima=new AlphaAnimation(0.9f,1.0f);
-        anima.setDuration(1000);//设置动画时间
+        anima.setDuration(600);//设置动画时间
         welcomeImg.startAnimation(anima);
         anima.setAnimationListener(new AnimationImpl());
     }
