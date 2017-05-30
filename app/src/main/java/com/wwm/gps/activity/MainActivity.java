@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -202,13 +203,33 @@ public class MainActivity extends BaseActivity{
         }
     }
 
+    /**
+     * 6.0权限申请返回码
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @TargetApi(23)
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        // TODO Auto-generated method stub
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 100:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
 
+                } else {
+                    // Permission Denied
+                    Toast.makeText(MainActivity.this, "权限申请失败,您的图片上传功能将无法使用,请您通过权限后重新登录", Toast.LENGTH_SHORT)
+                            .show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
+
+
     @Override
     protected void onDestroy() {
 //        Intent intent = new Intent(MainActivity.this, DWService.class);
@@ -268,7 +289,6 @@ public class MainActivity extends BaseActivity{
     /**
      * ImageLoader创建及初始化
      *
-     * @param
      */
     private void initImageLoader() {
         // 创建默认的ImageLoader配置参数
@@ -293,7 +313,7 @@ public class MainActivity extends BaseActivity{
 //        ThemeConfig theme = new ThemeConfig.Builder()
 //                .build();
 
-        String imgPath = Environment.getExternalStorageDirectory() + "/road" + "/images/";
+        String imgPath = Environment.getExternalStorageDirectory() + "/DCIM" + "/images/";
         File mFile = new File(imgPath);
         //配置功能
         FunctionConfig functionConfig = new FunctionConfig.Builder()
@@ -317,14 +337,14 @@ public class MainActivity extends BaseActivity{
         File dcim = Environment.getExternalStorageDirectory();
         if (DeviceUtils.isZte()) {
             if (dcim.exists()) {
-                VCamera.setVideoCachePath(dcim + "/road/recoder/");
+                VCamera.setVideoCachePath(dcim + "/DCIM/record/");
             } else {
                 VCamera.setVideoCachePath(dcim.getPath().replace("/sdcard/",
                         "/sdcard-ext/")
                         + "/recoder/");
             }
         } else {
-            VCamera.setVideoCachePath(dcim + "/road/recoder/");
+            VCamera.setVideoCachePath(dcim + "/DCIM/record/");
         }
 
 //		VCamera.setVideoCachePath(FileUtils.getRecorderPath());

@@ -5,7 +5,7 @@ package com.wwm.gps.constant;
  * Created by ly on 16/5/11.
  */
 public class UrlUtils {
-    public static final String URL = "http://60.29.110.104:8082/";
+    public static final String URL = "http://60.29.110.104:8092/";
     //登录
     public static final String LOGIN = URL + "api/Account/authenticate";
     //修改密码

@@ -65,37 +65,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         init();
         initData();
 
 //        askPermission();
         httpGetSystemTitle();
-    }
-
-    /**
-     * 6.0权限申请返回码
-     *
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 100:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission Granted
-
-                } else {
-                    // Permission Denied
-                    Toast.makeText(LoginActivity.this, "权限申请失败,您的图片上传功能将无法使用,请您通过权限后重新登录", Toast.LENGTH_SHORT)
-                            .show();
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
     }
 
     public void init() {
@@ -114,9 +88,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void initData() {
-
-//        userInfos = MySetting.getSaveLogin(this);
-
         cb_show_pwd.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

@@ -110,7 +110,7 @@ public class UpdateDialog {
 		tvTitle.setText("版本更新");
 		tvContent = (TextView) window.findViewById(R.id.tv_two_dialog_content);
 		tvContent.setText(title);
-		tvCancle = (TextView) window.findViewById(R.id.tv_two_dialog_cancle);
+		tvCancle = (TextView) window.findViewById(R.id.tv_two_dialog_cancel);
 		if (isDown.equals("0")) {
 			tvCancle.setText(cacle);
 			tvCancle.setOnClickListener(new OnClickListener() {
