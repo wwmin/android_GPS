@@ -292,7 +292,7 @@ public class MainActivity extends BaseActivity{
 //        ThemeConfig theme = new ThemeConfig.Builder()
 //                .build();
 
-        String imgPath = Environment.getExternalStorageDirectory() + "/road" + "/images/";
+        String imgPath = Environment.getExternalStorageDirectory() + "/DCIM" + "/images/";
         File mFile = new File(imgPath);
         //配置功能
         FunctionConfig functionConfig = new FunctionConfig.Builder()
@@ -316,14 +316,14 @@ public class MainActivity extends BaseActivity{
         File dcim = Environment.getExternalStorageDirectory();
         if (DeviceUtils.isZte()) {
             if (dcim.exists()) {
-                VCamera.setVideoCachePath(dcim + "/road/recoder/");
+                VCamera.setVideoCachePath(dcim + "/DCIM/recoder/");
             } else {
                 VCamera.setVideoCachePath(dcim.getPath().replace("/sdcard/",
                         "/sdcard-ext/")
                         + "/recoder/");
             }
         } else {
-            VCamera.setVideoCachePath(dcim + "/road/recoder/");
+            VCamera.setVideoCachePath(dcim + "/DCIM/recoder/");
         }
 
 //		VCamera.setVideoCachePath(FileUtils.getRecorderPath());
