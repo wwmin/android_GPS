@@ -316,14 +316,14 @@ public class MainActivity extends BaseActivity{
         File dcim = Environment.getExternalStorageDirectory();
         if (DeviceUtils.isZte()) {
             if (dcim.exists()) {
-                VCamera.setVideoCachePath(dcim + "/DCIM/recoder/");
+                VCamera.setVideoCachePath(dcim + "/DCIM/record/");
             } else {
                 VCamera.setVideoCachePath(dcim.getPath().replace("/sdcard/",
                         "/sdcard-ext/")
                         + "/recoder/");
             }
         } else {
-            VCamera.setVideoCachePath(dcim + "/DCIM/recoder/");
+            VCamera.setVideoCachePath(dcim + "/DCIM/record/");
         }
 
 //		VCamera.setVideoCachePath(FileUtils.getRecorderPath());

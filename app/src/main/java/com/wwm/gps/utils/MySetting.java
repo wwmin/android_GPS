@@ -1,6 +1,7 @@
 package com.wwm.gps.utils;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.wwm.gps.bean.UserInfo;
@@ -31,8 +32,8 @@ public class MySetting {
     public static UserInfos getSaveLogin(Context context) {
         UserInfos infos = new UserInfos();
 //			String _str = AppOS.appOs.getString(KEY_SAVE_LOGIN, null);
-        String str = (String) SPUtil.getData(context, KEY_SAVE_LOGIN,null);
-        if (str != null) {
+        String str = (String) SPUtil.getData(context, KEY_SAVE_LOGIN,"");
+        if (!TextUtils.isEmpty(str)) {
             infos = new Gson().fromJson(str, UserInfos.class);
         }
         return infos;

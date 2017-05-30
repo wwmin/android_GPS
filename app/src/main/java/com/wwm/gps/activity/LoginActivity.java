@@ -65,7 +65,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         init();
         initData();
 
@@ -114,9 +113,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void initData() {
-
-//        userInfos = MySetting.getSaveLogin(this);
-
         cb_show_pwd.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

@@ -8,12 +8,15 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 
 import com.wwm.gps.R;
+import com.wwm.gps.bean.UserInfos;
+import com.wwm.gps.utils.MySetting;
 
 /**
  * Created by wwmin on 2017/5/23.
  */
 
 public class StartActivity extends Activity {
+    private UserInfos userInfos = new UserInfos();
     private ImageView welcomeImg = null;
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -43,6 +46,14 @@ public class StartActivity extends Activity {
         }
     }
     private void skip(){
+        userInfos = MySetting.getSaveLogin(this);
+        if (userInfos != null && userInfos.infos.size() > 0) {
+            /*此时的登录用户就是上次登录成功并记住密码的  可以跳转到主页*/
+            Intent intent = new Intent(StartActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
         startActivity(new Intent(this,LoginActivity.class));
         finish();
     }
