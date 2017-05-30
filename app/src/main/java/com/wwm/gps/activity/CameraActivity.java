@@ -24,6 +24,7 @@ import com.wwm.gps.constant.Constant;
 import com.wwm.gps.constant.UrlUtils;
 import com.wwm.gps.dialog.SelectListDialog;
 import com.wwm.gps.utils.PermissionUtil;
+import com.wwm.gps.utils.SPUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -349,13 +350,23 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
     };
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         Intent intent = getIntent();
         String number = intent.getStringExtra("Number");
         if (number == null) {
             number = "0";
         }
-        tv_pre_photo.setText(number);
+        String[] imagePaths=SPUtil.getData(CameraActivity.this, Constant.IMAGE_LIST, "").toString().split("\\|");
+        int len=imagePaths.length;
+        int i=0;
+        int imageNum=0;
+        while (i<len){
+            if(!imagePaths[i].isEmpty()){
+                imageNum++;
+            }
+            i++;
+        }
+        tv_pre_photo.setText(imageNum+" 张");
     }
 }

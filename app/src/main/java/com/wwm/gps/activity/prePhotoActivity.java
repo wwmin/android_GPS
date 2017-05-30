@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.wwm.gps.R;
 import com.wwm.gps.constant.Constant;
 import com.wwm.gps.dialog.TwoBtnDialog;
+import com.wwm.gps.utils.SPUtil;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,6 +32,9 @@ import java.util.List;
 
 import cn.finalteam.galleryfinal.GalleryFinal;
 import cn.finalteam.galleryfinal.model.PhotoInfo;
+
+import static com.wwm.gps.utils.Common.listToString;
+
 
 /**
  * Created by wwmin on 2017/5/29.
@@ -70,6 +74,19 @@ public class prePhotoActivity extends BaseActivity implements View.OnClickListen
         btn_take_photo.setOnClickListener(this);
         btn_clear_all.setOnClickListener(this);
         imageItem = new ArrayList<HashMap<String, Object>>();
+
+        String[] imagePaths = SPUtil.getData(prePhotoActivity.this, Constant.IMAGE_LIST, "").toString().split("\\|");
+        int len = imagePaths.length;
+        int i = 0;
+        int imageNum = 0;
+        while (i < len) {
+            if (!imagePaths[i].isEmpty()) {
+                imageNum++;
+                showImage(imagePaths[i]);
+            }
+            i++;
+        }
+        tv_photo_num.setText(imageNum + " 张");
     }
 
     @Override
@@ -96,6 +113,7 @@ public class prePhotoActivity extends BaseActivity implements View.OnClickListen
                             tv_photo_num.setText("0 张");
                             imageItem.clear();
                             mPhotoList.clear();
+                            SPUtil.saveData(prePhotoActivity.this, Constant.IMAGE_LIST, "");
                             simpleAdapter.notifyDataSetChanged();
                             btnDialog.getDialog().cancel();
                         }
@@ -123,6 +141,9 @@ public class prePhotoActivity extends BaseActivity implements View.OnClickListen
                 for (int j = 0; j < resultList.size(); j++) {
                     showImage(resultList.get(j).getPhotoPath());
                 }
+                String il = listToString(imageList, '|');
+                Log.i("图片路径:", il);
+                SPUtil.saveData(prePhotoActivity.this, Constant.IMAGE_LIST, il);
 //                lksb.setImages(imageList);
 //                mChoosePhotoListAdapter.notifyDataSetChanged();
 //                String path = resultList.get(0).getPhotoPath();
@@ -185,8 +206,6 @@ public class prePhotoActivity extends BaseActivity implements View.OnClickListen
         }
     }
 
-
-    //刷新图片
     @Override
     protected void onResume() {
         super.onResume();

@@ -8,31 +8,22 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-import com.baidu.location.Poi;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.DistanceUtil;
-import com.wwm.gps.R;
 import com.wwm.gps.application.LocationApplication;
 import com.wwm.gps.application.MainApplication;
-import com.wwm.gps.constant.UrlUtils;
 import com.wwm.gps.utils.BaiduMapUtils;
 import com.wwm.gps.utils.DateUtils;
 
 import net.tsz.afinal.FinalHttp;
-import net.tsz.afinal.http.AjaxCallBack;
 import net.tsz.afinal.http.AjaxParams;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -141,12 +132,12 @@ public class XCService extends Service {
 
             if (location != null && (location.getLocType() == 61 || location.getLocType() == 161 || location.getLocType() == 66)) {
                 Log.e("type", location.getLocType()+"");
-                Message locMsg = locHander.obtainMessage();
+                Message locMsg = locHandler.obtainMessage();
                 Bundle locData = Algorithm(location);
                 if (locData != null) {
                     locData.putParcelable("loc", location);
                     locMsg.setData(locData);
-                    locHander.sendMessage(locMsg);
+                    locHandler.sendMessage(locMsg);
                 }
             }
         }
@@ -207,7 +198,7 @@ public class XCService extends Service {
     /***
      * 接收定位结果消息
      */
-    private Handler locHander = new Handler() {
+    private Handler locHandler = new Handler() {
 
         @Override
         public void handleMessage(Message msg) {

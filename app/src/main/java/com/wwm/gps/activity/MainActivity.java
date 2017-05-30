@@ -268,7 +268,6 @@ public class MainActivity extends BaseActivity{
     /**
      * ImageLoader创建及初始化
      *
-     * @param
      */
     private void initImageLoader() {
         // 创建默认的ImageLoader配置参数

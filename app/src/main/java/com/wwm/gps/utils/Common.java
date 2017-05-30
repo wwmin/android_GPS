@@ -7,11 +7,13 @@ import com.wwm.gps.bean.Company;
 import com.wwm.gps.bean.LoginInfo;
 import com.wwm.gps.constant.Constant;
 
+import java.util.List;
+
 /**
  * Created by linye on 2016/9/12.
  */
 public class Common {
-    public static String getUserId(Context context){
+    public static String getUserId(Context context) {
         String userId = "";
         String userStr = SPUtil.getData(context, Constant.SP_USER_INFO, "").toString();
         Gson gson = new Gson();
@@ -21,7 +23,7 @@ public class Common {
         return userId;
     }
 
-    public static String getCompanyId(Context context){
+    public static String getCompanyId(Context context) {
         String companyId = "";
         String companyStr = SPUtil.getData(context, Constant.SP_COMPANY, "").toString();
         Gson gson = new Gson();
@@ -29,5 +31,13 @@ public class Common {
         companyId = company.getCompanyID() + "";
 
         return companyId;
+    }
+
+    public static String listToString(List list, char separator) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            sb.append(list.get(i)).append(separator);
+        }
+        return sb.toString().substring(0, sb.toString().length() - 1);
     }
 }

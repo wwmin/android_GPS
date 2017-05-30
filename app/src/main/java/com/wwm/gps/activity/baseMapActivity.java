@@ -1,6 +1,5 @@
 package com.wwm.gps.activity;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,39 +12,27 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.BitmapDescriptor;
-import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
-import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.DistanceUtil;
 import com.wwm.gps.R;
 import com.wwm.gps.application.LocationApplication;
-import com.wwm.gps.application.MainApplication;
-import com.wwm.gps.constant.UrlUtils;
 import com.wwm.gps.service.LocationService;
 import com.wwm.gps.service.XCService;
 import com.wwm.gps.utils.BaiduMapUtils;
-import com.wwm.gps.utils.Common;
 import com.wwm.gps.utils.DateUtils;
 
 import net.tsz.afinal.FinalHttp;
-import net.tsz.afinal.http.AjaxCallBack;
 import net.tsz.afinal.http.AjaxParams;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.LinkedList;
 
@@ -146,13 +133,13 @@ public class baseMapActivity extends BaseActivity {
 
             if (location != null && (location.getLocType() == 61 || location.getLocType() == 161 || location.getLocType() == 66)) {
 //                Toast.makeText(XCActivity.this,location.getLocType()+","+ location.getLatitude(),Toast.LENGTH_SHORT).show();
-                Message locMsg = locHander.obtainMessage();
+                Message locMsg = locHandler.obtainMessage();
                 Bundle locData;
                 locData = Algorithm(location);
                 if (locData != null) {
                     locData.putParcelable("loc", location);
                     locMsg.setData(locData);
-                    locHander.sendMessage(locMsg);
+                    locHandler.sendMessage(locMsg);
                 }
             }
         }
@@ -164,7 +151,7 @@ public class baseMapActivity extends BaseActivity {
     /***
      * 接收定位结果消息
      */
-    private Handler locHander = new Handler() {
+    private Handler locHandler = new Handler() {
 
         @Override
         public void handleMessage(Message msg) {

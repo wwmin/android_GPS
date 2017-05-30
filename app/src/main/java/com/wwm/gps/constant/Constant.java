@@ -23,4 +23,7 @@ public class Constant {
     public static final int REQUEST_CODE_EDIT = 1003;
 
     public static final String BAIDU_WEATHER_KEY = "ZZsILbSHgTENKaljHhN7RY3SCkerdn6B";
+
+    //image list
+    public static final String IMAGE_LIST = "imageList";
 }
