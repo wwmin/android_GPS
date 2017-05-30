@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.wwm.gps.R;
 import com.wwm.gps.constant.Constant;
+import com.wwm.gps.dialog.TwoBtnDialog;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -87,22 +88,18 @@ public class prePhotoActivity extends BaseActivity implements View.OnClickListen
                 break;
             case R.id.btn_clear_all:
                 if (gridView.getChildCount() > 0) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("确认清空已添加图片吗？");
-                    builder.setTitle("提示");
-                    builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    final TwoBtnDialog btnDialog = new TwoBtnDialog();
+                    btnDialog.showdialog(this, "确定清空已添加图片吗?", "确定", "取消");
+                    btnDialog.getBtnOk().setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(View v) {
                             tv_photo_num.setText("0 张");
-                            int cnt = imageItem.size();
-                            for (int i = cnt - 1; i >= 0; i--) {
-                                imageItem.clear();
-                                simpleAdapter.notifyDataSetChanged();
-                            }
+                            imageItem.clear();
+                            mPhotoList.clear();
+                            simpleAdapter.notifyDataSetChanged();
+                            btnDialog.getDialog().cancel();
                         }
                     });
-                    builder.setNegativeButton("取消", null);
-                    builder.create().show();
                     break;
                 } else {
                     Toast.makeText(prePhotoActivity.this, "已清空",

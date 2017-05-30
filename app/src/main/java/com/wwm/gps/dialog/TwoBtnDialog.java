@@ -15,7 +15,7 @@ public class TwoBtnDialog {
 
 	private TextView tv_title;
 	private TextView btn_ok;
-	private TextView btn_cancle;
+	private TextView btn_cancel;
 	private TextView tv_content;
 	private AlertDialog dialog;
 	
@@ -26,15 +26,15 @@ public class TwoBtnDialog {
 	public TextView getBtnOk(){
 		return btn_ok;
 	}
-	public TextView getBtnCancle(){
-		return btn_cancle;
+	public TextView getBtnCancel(){
+		return btn_cancel;
 	}
 	
 	public AlertDialog getDialog(){
 		return dialog;
 	}
 	
-	public void showdialog(Context context, String content, String ok, String cancle){
+	public void showdialog(Context context, String content, String ok, String cancel){
 
 		dialog = new AlertDialog.Builder(context).create();
 		dialog.show();
@@ -48,21 +48,16 @@ public class TwoBtnDialog {
 		btn_ok = (TextView) window.findViewById(R.id.tv_two_dialog_ok);
 		btn_ok.setText(ok);
 		btn_ok.setOnClickListener(new OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
-				
-				
 			}
 		});
-		btn_cancle = (TextView) window.findViewById(R.id.tv_two_dialog_cancle);
-		btn_cancle.setText(cancle);
-		btn_cancle.setOnClickListener(new OnClickListener() {
-			
+		btn_cancel = (TextView) window.findViewById(R.id.tv_two_dialog_cancel);
+		btn_cancel.setText(cancel);
+		btn_cancel.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				dialog.cancel();
-				
 			}
 		});
 		
