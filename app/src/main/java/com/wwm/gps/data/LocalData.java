@@ -46,7 +46,6 @@ public class LocalData {
         menu13.setName("系统设置");
         menu13.setImg(R.drawable.home_icon_13);
         list.add(menu13);
-
         return list;
 
     }
