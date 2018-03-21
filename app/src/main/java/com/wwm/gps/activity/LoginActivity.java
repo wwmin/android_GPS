@@ -169,12 +169,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         mHttp.configCharset("utf-8");
 
         AjaxParams params = new AjaxParams();
-        params.put("name", userInfo.LoginName);
-        params.put("password", userInfo.LoginPass);
-//        params.put("UserName", userInfo.LoginName);
-//        params.put("UserPassword", userInfo.LoginPass);
+        params.put("PhoneNum", userInfo.LoginName);
+        params.put("PassWord", userInfo.LoginPass);
 
-        String url = mHttp.getUrlWithQueryString(UrlUtils.LOGIN, params);
+//        String url = mHttp.getUrlWithQueryString(UrlUtils.LOGIN, params);
 
         mHttp.post(UrlUtils.LOGIN, params, new AjaxCallBack<String>() {
             @Override
@@ -182,11 +180,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 Log.i("LOGIN", content);
                 try {
                     JSONObject jsonObj = new JSONObject(content);
-                    boolean result = jsonObj.getBoolean("success");
+                    boolean result = jsonObj.getBoolean("result");
                     if (result) {
-                        JSONObject data = jsonObj.getJSONObject("_currentUser");
-                        String company = data.getString("truename");
-                        String user = data.getString("name");
+                        JSONObject data = jsonObj.getJSONObject("data");
+                        String company = data.getString("CompanyID");
+                        String user = data.getString("UserName");
 
                         SPUtil.saveData(LoginActivity.this, Constant.SP_COMPANY, company);
                         SPUtil.saveData(LoginActivity.this, Constant.SP_USER_INFO, user);
@@ -197,11 +195,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         }
                         MySetting.saveLogin(LoginActivity.this, userInfos, userInfo);
 
+                        Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                         loadingDialog.dismiss();
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
-
                     } else {
                         String error = jsonObj.getString("error");
                         Toast.makeText(LoginActivity.this, error, Toast.LENGTH_SHORT).show();

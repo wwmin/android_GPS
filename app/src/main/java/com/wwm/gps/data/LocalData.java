@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 public class LocalData {
-    public static List<HomeMenu> getHomeMenu () {
+    public static List<HomeMenu> getHomeMenu() {
         List<HomeMenu> list = new ArrayList<HomeMenu>();
 
         HomeMenu menu01 = new HomeMenu();
@@ -39,6 +39,11 @@ public class LocalData {
         menu04.setImg(R.drawable.home_icon_04);
         list.add(menu04);
 
+        HomeMenu menu05 = new HomeMenu();
+        menu05.setId(5);
+        menu05.setName("萤石云视频");
+        menu05.setImg(R.drawable.ysy_app_icon);
+        list.add(menu05);
 
 
         HomeMenu menu13 = new HomeMenu();

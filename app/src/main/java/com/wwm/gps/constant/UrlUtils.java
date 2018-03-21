@@ -5,9 +5,9 @@ package com.wwm.gps.constant;
  * Created by ly on 16/5/11.
  */
 public class UrlUtils {
-    public static final String URL = "http://60.29.110.104:8092/";
+    public static final String URL = "http://123.207.174.121:8024/";
     //登录
-    public static final String LOGIN = URL + "api/Account/authenticate";
+    public static final String LOGIN = URL + "User/Login";
     //修改密码
     public static final String UPDATE_PASS = URL + "UserInfo/ModifyPwd";
     //获取登录用户所属公司信息

@@ -1,11 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.wwm.gps">
-
-    <uses-sdk
-        android:minSdkVersion="19"
-        android:targetSdkVersion="21" />
-
+    <!--<uses-sdk-->
+    <!--android:minSdkVersion="19"-->
+    <!--android:targetSdkVersion="21" />-->
     <application
         android:name="com.wwm.gps.application.LocationApplication"
         android:allowBackup="true"
@@ -92,8 +90,6 @@
         <service
             android:name=".service.DownloadService"
             android:enabled="true" />
-
-
     </application>
 
     <!-- 这个权限用于进行网络定位-->
@@ -122,4 +118,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
 </manifest>

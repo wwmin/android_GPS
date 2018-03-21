@@ -56,7 +56,7 @@ import cn.finalteam.galleryfinal.ThemeConfig;
 /**
  * Created by wwm on 2016/8/11.
  */
-public class MainActivity extends BaseActivity{
+public class MainActivity extends BaseActivity {
     private GridView gv_menu;
     private MainMenuAdapter menuAdapter;
     private List<HomeMenu> menuList = new ArrayList<HomeMenu>();
@@ -68,6 +68,7 @@ public class MainActivity extends BaseActivity{
     public static MainActivity instance = null;
 
     private LocationManager locationManager;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,6 +116,7 @@ public class MainActivity extends BaseActivity{
 
         initVideo();
     }
+
     private void init() {
         tv_title = (TextView) findViewById(R.id.top_view_text);
         String title = SPUtil.getData(MainActivity.this, Constant.SP_SYS_TITLE, "定位系统").toString();
@@ -146,6 +148,8 @@ public class MainActivity extends BaseActivity{
                         Intent cameraIntent = new Intent(MainActivity.this, CameraActivity.class);
                         startActivity(cameraIntent);
                         break;
+                    case 5:
+//                        Intent ysyVideoIntent=new Intent(MainActivity.this )
                     case 13:
                         Intent settingIntent = new Intent(MainActivity.this, SettingActivity.class);
                         startActivity(settingIntent);
@@ -164,13 +168,13 @@ public class MainActivity extends BaseActivity{
              * 定位权限为必须权限，用户如果禁止，则每次进入都会申请
              */
             // 定位精确位置
-            if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
             }
-            if(checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
             }
-			/*
+            /*
 			 * 读写权限和电话状态权限非必要权限(建议授予)只会申请一次，用户同意或者禁止，只会弹一次
 			 */
             // 读写权限
@@ -191,14 +195,14 @@ public class MainActivity extends BaseActivity{
     @TargetApi(23)
     private boolean addPermission(ArrayList<String> permissionsList, String permission) {
         if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) { // 如果应用没有获得对应权限,则添加到列表中,准备批量申请
-            if (shouldShowRequestPermissionRationale(permission)){
+            if (shouldShowRequestPermissionRationale(permission)) {
                 return true;
-            }else{
+            } else {
                 permissionsList.add(permission);
                 return false;
             }
 
-        }else{
+        } else {
             return true;
         }
     }
@@ -237,7 +241,7 @@ public class MainActivity extends BaseActivity{
         super.onDestroy();
     }
 
-    private List<String> getData(){
+    private List<String> getData() {
         List<String> list = new ArrayList<>();
         for (int i = 0; i < 13; i++) {
             String str = "";
@@ -247,6 +251,7 @@ public class MainActivity extends BaseActivity{
         return list;
 
     }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -286,9 +291,9 @@ public class MainActivity extends BaseActivity{
         });
         dialog.show();
     }
+
     /**
      * ImageLoader创建及初始化
-     *
      */
     private void initImageLoader() {
         // 创建默认的ImageLoader配置参数
@@ -306,7 +311,8 @@ public class MainActivity extends BaseActivity{
         ImageLoader.getInstance().init(config);
 
     }
-    public void initGalleryFinal(){
+
+    public void initGalleryFinal() {
 
         //设置主题
         ThemeConfig theme = ThemeConfig.CYAN;
@@ -332,7 +338,8 @@ public class MainActivity extends BaseActivity{
                 .build();
         GalleryFinal.init(coreConfig);
     }
-    private void initVideo () {
+
+    private void initVideo() {
         //设置拍摄视频缓存路径
         File dcim = Environment.getExternalStorageDirectory();
         if (DeviceUtils.isZte()) {
