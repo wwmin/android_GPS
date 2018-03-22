@@ -150,6 +150,7 @@ public class MainActivity extends BaseActivity {
                         break;
                     case 5:
 //                        Intent ysyVideoIntent=new Intent(MainActivity.this )
+                        break;
                     case 13:
                         Intent settingIntent = new Intent(MainActivity.this, SettingActivity.class);
                         startActivity(settingIntent);
